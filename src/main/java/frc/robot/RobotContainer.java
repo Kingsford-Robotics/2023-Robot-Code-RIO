@@ -5,7 +5,6 @@
 package frc.robot;
 
 import java.util.HashMap;
-import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -18,9 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
@@ -28,13 +25,13 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
-import frc.robot.commands.AlignCone;
-import frc.robot.commands.GoHome;
-import frc.robot.commands.GrabFromTurntable;
-import frc.robot.commands.GroundGrab;
-import frc.robot.commands.Place;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.Alignment.ConeAlign;
+import frc.robot.commands.Positions.GroundGrab;
+import frc.robot.commands.Positions.HomePosition;
+import frc.robot.commands.Positions.Place;
+import frc.robot.commands.Positions.TurntableGrab;
 import frc.robot.subsystems.DashboardDisplay;
 import frc.robot.subsystems.Swerve;
 
@@ -58,11 +55,11 @@ public class RobotContainer {
     /* Commands */
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
-    private final GoHome m_GoHome = new GoHome(m_Arm, m_Elevator);
-    private final GrabFromTurntable m_GrabFromTurntable = new GrabFromTurntable(m_Arm, m_Elevator);
+    private final HomePosition m_GoHome = new HomePosition(m_Arm, m_Elevator);
+    private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
     private final GroundGrab m_GroundGrab = new GroundGrab(m_Arm, m_Elevator);
-    private final AlignCone m_AlignCone = new AlignCone(this, m_Swerve, m_Limelight);
+    private final ConeAlign m_AlignCone = new ConeAlign(this, m_Swerve, m_Limelight);
 
     /*Control State Variables*/
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
@@ -207,21 +204,5 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return m_Swerve.followTrajectoryCommand(traj1, false);
-        /*return new SequentialCommandGroup(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> level = 2),
-                new InstantCommand(() -> isCone = true),
-                new InstantCommand(() -> m_Arm.close()),
-                new WaitCommand(0.3),
-                m_Place.getCommand(),
-                driveForwardPlace,
-                new WaitCommand(0.75),
-                new InstantCommand(()-> m_Arm.open()),
-                new WaitCommand(0.3),
-                new ParallelCommandGroup(
-                    crossLineDrive,
-                    m_GoHome.getCommand()
-                )
-        ));*/
     }
 }
