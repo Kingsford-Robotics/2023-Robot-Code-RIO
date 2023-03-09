@@ -45,6 +45,8 @@ public class Limelight extends SubsystemBase {
     txEntry = limelightTab.add("tx", 0.0).getEntry();
     tyEntry = limelightTab.add("ty", 0.0).getEntry();
     tzEntry = limelightTab.add("tz", 0.0).getEntry();
+
+    
   }
 
   public void setLedMode(LedMode ledMode) {

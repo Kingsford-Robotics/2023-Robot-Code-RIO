@@ -4,7 +4,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,10 +18,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 
 public class DashboardDisplay extends SubsystemBase {
+  
   /*Subsystem References for Data and Commands*/
   private RobotContainer m_RobotContainer;
   private Swerve m_Swerve;
-  private Arm arm;
+  private Arm m_arm;
+
+  private Limelight m_Limelight;
+
+  private MjpegServer turntableCameraServ;
+  private MjpegServer frontCameraServ;
 
   /*Camera Streams*/
   private UsbCamera turnTableCamera;
@@ -28,32 +37,49 @@ public class DashboardDisplay extends SubsystemBase {
   private ShuffleboardTab competitionTab;
 
   /*Shuffleboard Data*/
-
   private GenericEntry gyroAngle;
   private GenericEntry targetType;
   private GenericEntry scoreLocation;
   private GenericEntry isArmFront;
+  private GenericEntry odometryX;
+  private GenericEntry odometryY;
+
+  private GenericEntry targetX;
+  private GenericEntry targetZ;
 
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
 
-  public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve, Arm arm) {
+  public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve, Arm m_arm, Limelight m_Limelight) {
     /*Subsystem Instantiation */
     this.m_RobotContainer = m_RobotContainer;
     this.m_Swerve = m_Swerve;
-    this.arm = arm;
+    this.m_arm = m_arm;
+    this.m_Limelight = m_Limelight;
 
     competitionTab = Shuffleboard.getTab("Competition");
 
+    /*Camera Instantiation*/
     turnTableCamera = CameraServer.startAutomaticCapture(0);
     frontCamera = CameraServer.startAutomaticCapture(1);
 
     turnTableCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
     frontCamera.setVideoMode(PixelFormat.kMJPEG, 480, 320, 10);
 
-    competitionTab.add("Turntable", turnTableCamera);
-    competitionTab.add("Front", frontCamera);
+    turntableCameraServ = new MjpegServer("Turntable", 1182);
+    frontCameraServ = new MjpegServer("Front", 1183);
+
+    turntableCameraServ.setSource(turnTableCamera);
+    frontCameraServ.setSource(frontCamera);
+
+    //Add compression to the cameras
+    turntableCameraServ.getProperty("compression").set(30);
+    frontCameraServ.getProperty("compression").set(30);
+
+    competitionTab.add("Turntable", turntableCameraServ.getSource());
+    competitionTab.add("Front",frontCameraServ.getSource());
+
 
     /*Shuffleboard Data Instantiation*/
     gyroAngle = competitionTab.add("Gyro Angle", 0).getEntry();
@@ -63,7 +89,14 @@ public class DashboardDisplay extends SubsystemBase {
     scoreLocation = competitionTab.add("Score Location", "Unknown").getEntry();
     isArmFront = competitionTab.add("Arm Front", false).getEntry();
 
-    competitionTab.add(new InstantCommand(() -> arm.toggleExtension()));
+    odometryX = competitionTab.add("Odometry X", 0.0).getEntry();
+    odometryY = competitionTab.add("Odometry Y", 0.0).getEntry();
+
+    targetX = competitionTab.add("Target X", 0.0).getEntry();
+    targetZ = competitionTab.add("Target Z", 0.0).getEntry();
+
+
+    competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
   }
 
   @Override
@@ -89,5 +122,11 @@ public class DashboardDisplay extends SubsystemBase {
         scoreLocation.setString("Unknown");
         break;
     }
+
+    odometryX.setDouble(m_Swerve.getPose().getTranslation().getX());
+    odometryY.setDouble(m_Swerve.getPose().getTranslation().getY());
+
+    targetX.setDouble(m_Limelight.getTx());
+    targetZ.setDouble(m_Limelight.getTz());
   }
 }

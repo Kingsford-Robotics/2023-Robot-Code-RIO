@@ -48,7 +48,7 @@ public class RobotContainer {
     private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
     
-    private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve, m_Arm);
+    private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve, m_Arm, m_Limelight);
 
     private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
 
@@ -203,6 +203,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return m_Swerve.followTrajectoryCommand(traj1, false);
+        //return m_Swerve.followTrajectoryCommand(traj1, false);
+        return null;
     }
 }
