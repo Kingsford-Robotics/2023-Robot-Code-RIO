@@ -56,17 +56,17 @@ public class Limelight extends SubsystemBase {
 
   public double getTx() {
     //Get target x pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[0];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[0];
   }
 
   public double getTy() {
     //Get target y pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[1];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[1];
   }
 
   public double getTz() {
     //Get target z pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[2];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[2];
   }
 
   public double getAngle()
