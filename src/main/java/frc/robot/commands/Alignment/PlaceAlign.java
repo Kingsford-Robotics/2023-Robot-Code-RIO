@@ -36,6 +36,8 @@ public class PlaceAlign extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
+    
     targetPath = PathPlanner.generatePath(
     new PathConstraints(1, 1),
     
@@ -46,7 +48,7 @@ public class PlaceAlign extends CommandBase {
     ), //Sets starting point of path to current position.
 
     new PathPoint(
-      swerve.getPose().getTranslation().minus(new Translation2d(limelight.getTz() - 1, -limelight.getTx())), 
+      swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
       Rotation2d.fromDegrees(0), 
       Rotation2d.fromDegrees(0.0)) // position, heading(direction of travel), holonomic rotation
     );
@@ -57,7 +59,7 @@ public class PlaceAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+
       
   }
 
