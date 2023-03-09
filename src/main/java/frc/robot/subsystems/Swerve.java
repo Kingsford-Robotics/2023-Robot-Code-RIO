@@ -141,6 +141,11 @@ public class Swerve extends SubsystemBase {
        return (DrivetrainConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
+    public double getHeading()
+    {
+        return Math.IEEEremainder(getYaw().getDegrees(), 360) + 180;
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();

@@ -47,6 +47,8 @@ public class DashboardDisplay extends SubsystemBase {
   private GenericEntry targetX;
   private GenericEntry targetZ;
 
+  private GenericEntry heading;
+
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
@@ -95,6 +97,8 @@ public class DashboardDisplay extends SubsystemBase {
     targetX = competitionTab.add("Target X", 0.0).getEntry();
     targetZ = competitionTab.add("Target Z", 0.0).getEntry();
 
+    heading = competitionTab.add("Heading", 0.0).getEntry();
+
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
   }
@@ -128,5 +132,7 @@ public class DashboardDisplay extends SubsystemBase {
 
     targetX.setDouble(m_Limelight.getTx());
     targetZ.setDouble(m_Limelight.getTz());
+
+    heading.setDouble(m_Swerve.getHeading());
   }
 }

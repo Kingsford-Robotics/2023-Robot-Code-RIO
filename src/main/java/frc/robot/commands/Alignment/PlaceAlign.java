@@ -36,8 +36,6 @@ public class PlaceAlign extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
-    
     targetPath = PathPlanner.generatePath(
     new PathConstraints(1, 1),
     
