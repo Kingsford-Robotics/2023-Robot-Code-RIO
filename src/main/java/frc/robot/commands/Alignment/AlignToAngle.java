@@ -23,17 +23,21 @@ public class AlignToAngle extends CommandBase {
   }
 
 
+  //Calculate angle difference with two angle -180 to 180
   public double getAngleDifference(double currentAngle, double target)
   {
-    if(target - currentAngle < -180)
+    double difference = target - currentAngle;
+
+    if (difference > 180)
     {
-      return target-currentAngle + 360;
+      difference -= 360;
+    }
+    else if (difference < -180)
+    {
+      difference += 360;
     }
 
-    else{
-      return target - currentAngle;
-    }
-
+    return difference;
   }
   // Called when the command is initially scheduled.
   @Override
@@ -44,9 +48,11 @@ public class AlignToAngle extends CommandBase {
   public void execute() {
     m_Swerve.drive(
       new Translation2d(0, 0), 
-      Math.signum(getAngleDifference(m_Swerve.getHeading(), angle)) * Math.min(getAngleDifference(m_Swerve.getHeading(), angle) * 0.1, 0.5), 
+      Math.signum(getAngleDifference(m_Swerve.getHeading(), angle)) * Math.min(Math.abs(getAngleDifference(m_Swerve.getHeading(), angle)) * 0.1, 0.5), 
       true, 
       false);
+
+      System.out.println(getAngleDifference(m_Swerve.getHeading(), angle));
   }
 
   // Called once the command ends or is interrupted.
@@ -56,6 +62,6 @@ public class AlignToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(angle - m_Swerve.getYaw().getDegrees()) < 2.0;
+    return Math.abs(angle - m_Swerve.getYaw().getDegrees()) < 4.0;
   }
 }

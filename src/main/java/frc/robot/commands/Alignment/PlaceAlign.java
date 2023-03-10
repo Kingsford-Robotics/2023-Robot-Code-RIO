@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
@@ -47,11 +48,17 @@ public class PlaceAlign extends CommandBase {
 
     new PathPoint(
       swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
-      Rotation2d.fromDegrees(0), 
-      Rotation2d.fromDegrees(0.0)) // position, heading(direction of travel), holonomic rotation
+      Rotation2d.fromDegrees(0),
+      swerve.getYaw()
+    )
     );
 
-    swerve.followTrajectoryCommand(targetPath, false).schedule();
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new AlignToAngle(swerve, 0),
+      swerve.followTrajectoryCommand(targetPath, false)
+    );
+
+    group.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

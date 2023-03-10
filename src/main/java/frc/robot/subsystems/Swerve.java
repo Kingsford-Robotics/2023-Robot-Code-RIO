@@ -143,7 +143,7 @@ public class Swerve extends SubsystemBase {
 
     public double getHeading()
     {
-        return Math.IEEEremainder(getYaw().getDegrees(), 360) + 180;
+        return ((getYaw().getDegrees() + 180) % 360 - 180);
     }
 
     public void resetModulesToAbsolute(){

@@ -145,10 +145,10 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.place.whileTrue(m_Place.getCommand());
+        OIConstants.place.onTrue(m_Place.getCommand());
         OIConstants.place.onFalse(m_StopArmElevator);
 
-        OIConstants.align.whileTrue(m_AlignToAngle);
+        OIConstants.align.whileTrue(m_AlignCone);
 
         OIConstants.recalibrate.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
 
