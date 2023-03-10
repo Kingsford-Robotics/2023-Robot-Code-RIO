@@ -8,10 +8,13 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMotions.Place;
@@ -25,12 +28,13 @@ public class LimelightPlace extends SequentialCommandGroup {
 
   Swerve swerve;
   Limelight limelight;
-  RobotContainer container;
   Arm arm;
   Elevator elevator;
+  RobotContainer container;
 
   PathPlannerTrajectory targetTraj;
-  
+  Command swerveCommand;
+
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
     this.swerve = swerve;
@@ -59,11 +63,14 @@ public class LimelightPlace extends SequentialCommandGroup {
           Rotation2d.fromDegrees(0),
           swerve.getYaw()
         )
-        )
+        ),
+        limelight
     ),
 
-    swerve.followTrajectoryCommand(targetTraj, false),
-
+    new InstantCommand(() -> swerveCommand = swerve.followTrajectoryCommand(targetTraj, false)),
+    
+    swerveCommand,
+    
     new InstantCommand(() -> targetTraj = PathPlanner.generatePath(
         new PathConstraints(1, 1),
         
@@ -78,16 +85,14 @@ public class LimelightPlace extends SequentialCommandGroup {
           Rotation2d.fromDegrees(0),
           swerve.getYaw()
         )
-        )
+        ),
+        limelight
       ),
-
       //This might dynamically create new command at runtime and run it I hope.
-      new InstantCommand(() -> swerve.followTrajectoryCommand(targetTraj, false).asProxy()),
+      new InstantCommand(() -> swerve.followTrajectoryCommand(targetTraj, false)),
 
       new Place(container, arm, elevator).getCommand()
       //Add command to drive forward to place and then release. Add code to align with tx offset when close. Add code for cones offset.
-
-
     );
   }
 }

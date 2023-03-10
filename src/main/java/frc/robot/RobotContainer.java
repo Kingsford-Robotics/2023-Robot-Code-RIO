@@ -28,6 +28,7 @@ import frc.robot.subsystems.Ramp;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Alignment.AlignToAngle;
+import frc.robot.commands.Alignment.LimelightPlace;
 import frc.robot.commands.Alignment.PlaceAlign;
 import frc.robot.commands.ArmMotions.GroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
@@ -63,6 +64,8 @@ public class RobotContainer {
     private final PlaceAlign m_AlignCone = new PlaceAlign(this, m_Swerve, m_Limelight);
 
     private final AlignToAngle m_AlignToAngle = new AlignToAngle(m_Swerve, 0.0);
+
+    private final LimelightPlace m_LimelightPlace = new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator);
 
     /*Control State Variables*/
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
@@ -145,10 +148,10 @@ public class RobotContainer {
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.place.onTrue(m_Place.getCommand());
+        OIConstants.place.whileTrue(m_Place.getCommand());
         OIConstants.place.onFalse(m_StopArmElevator);
 
-        OIConstants.align.whileTrue(m_AlignCone);
+        OIConstants.align.whileTrue(m_LimelightPlace);
 
         OIConstants.recalibrate.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
 
