@@ -90,6 +90,8 @@ public class LimelightPlace extends SequentialCommandGroup {
       secondAlign,
 
       new Place(container, arm, elevator).getCommand()
+
+
     );
   }
 
@@ -130,6 +132,66 @@ public class LimelightPlace extends SequentialCommandGroup {
           swerve.getYaw()
         )
       );
+    }
+  }
+
+  private PathPlannerTrajectory GetPlaceTrajectory(boolean isCone, int level, Limelight limelight)
+  {
+    switch(level)
+    {
+      case 0:
+        return PathPlanner.generatePath(
+          new PathConstraints(1, 1),
+          
+          new PathPoint(
+            swerve.getPose().getTranslation(), 
+            Rotation2d.fromDegrees(0), 
+            swerve.getYaw()
+          ), //Sets starting point of path to current position.
+      
+          new PathPoint(
+            swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+            Rotation2d.fromDegrees(0),
+            swerve.getYaw()
+          )
+        );
+      
+      case 1:
+        return PathPlanner.generatePath(
+          new PathConstraints(1, 1),
+          
+          new PathPoint(
+            swerve.getPose().getTranslation(), 
+            Rotation2d.fromDegrees(0), 
+            swerve.getYaw()
+          ), //Sets starting point of path to current position.
+      
+          new PathPoint(
+            swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+            Rotation2d.fromDegrees(0),
+            swerve.getYaw()
+          )
+        );
+
+      case 2:
+        return PathPlanner.generatePath(
+          new PathConstraints(1, 1),
+          
+          new PathPoint(
+            swerve.getPose().getTranslation(), 
+            Rotation2d.fromDegrees(0), 
+            swerve.getYaw()
+          ), //Sets starting point of path to current position.
+      
+          new PathPoint(
+            swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+            Rotation2d.fromDegrees(0),
+            swerve.getYaw()
+          )
+        );
+
+      default:
+        return new PathPlannerTrajectory();
     }
   }
 }
