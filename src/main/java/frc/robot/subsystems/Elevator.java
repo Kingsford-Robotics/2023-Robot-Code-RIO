@@ -93,7 +93,7 @@ public class Elevator extends SubsystemBase {
     {
       speed = 0;
     }
-    else if((getBottomLimitSwitch() || getElevatorPosition() < RobotConstants.ElevatorConstants.safeZone) && speed < 0)
+    else if(getBottomLimitSwitch() && speed < 0)
     {
       speed = 0;
     }

@@ -39,7 +39,7 @@ public class HomePosition {
         );
         
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.7), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.6), elevator)
         );
 
         commandList.add(
@@ -48,7 +48,7 @@ public class HomePosition {
 
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(113, 0.5), arm)
+            new InstantCommand(() -> arm.setArmAngle(103, 0.75), arm)
         );
 
         commandList.add(
@@ -56,7 +56,7 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
+            new InstantCommand(() -> arm.setArmAngle(99.0, 0.2), arm)
         );
             
         commandList.add(
@@ -72,7 +72,7 @@ public class HomePosition {
         );
 
         commandList.add(
-            new WaitCommand(0.5)
+            new WaitCommand(0.25)
         );
 
         commandList.add(
