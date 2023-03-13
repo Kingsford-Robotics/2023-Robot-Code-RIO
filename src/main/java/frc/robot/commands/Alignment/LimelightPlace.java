@@ -8,19 +8,16 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.DriveTrajectory;
 import frc.robot.commands.ArmMotions.Place;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -37,8 +34,8 @@ public class LimelightPlace extends SequentialCommandGroup {
   RobotContainer container;
 
   PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
-  private Drive swerveCommand;
-  private Drive swerveCommand2;
+  private DriveTrajectory swerveCommand;
+  private DriveTrajectory swerveCommand2;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
@@ -49,7 +46,7 @@ public class LimelightPlace extends SequentialCommandGroup {
     this.arm = arm;
     this.elevator = elevator;
     
-    swerveCommand = new Drive(
+    swerveCommand = new DriveTrajectory(
       targetTraj,
       swerve::getPose,
       DrivetrainConstants.swerveKinematics,
@@ -60,7 +57,7 @@ public class LimelightPlace extends SequentialCommandGroup {
       swerve
     );
 
-    swerveCommand2 = new Drive(
+    swerveCommand2 = new DriveTrajectory(
       targetTraj,
       swerve::getPose,
       DrivetrainConstants.swerveKinematics,
@@ -127,5 +124,4 @@ public class LimelightPlace extends SequentialCommandGroup {
       //Add command to drive forward to place and then release. Add code to align with tx offset when close. Add code for cones offset.
     );
   }
-
 }

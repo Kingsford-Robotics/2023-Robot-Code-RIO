@@ -1,4 +1,4 @@
-package frc.robot.commands.Alignment;
+package frc.robot.commands;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** Custom PathPlanner version of SwerveControllerCommand */
-public class Drive extends CommandBase {
+public class DriveTrajectory extends CommandBase {
   private final Timer timer = new Timer();
   private PathPlannerTrajectory trajectory;
   private final Supplier<Pose2d> poseSupplier;
@@ -37,7 +37,7 @@ public class Drive extends CommandBase {
   private static Consumer<Pose2d> logTargetPose = null;
   private static Consumer<ChassisSpeeds> logSetpoint = null;
   private static BiConsumer<Translation2d, Rotation2d> logError =
-      Drive::defaultLogError;
+      DriveTrajectory::defaultLogError;
 
   /**
    * Constructs a new PPSwerveControllerCommand that when executed will follow the provided
@@ -59,7 +59,7 @@ public class Drive extends CommandBase {
    *     the field.
    * @param requirements The subsystems to require.
    */
-  public Drive(
+  public DriveTrajectory(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
       PIDController xController,
@@ -105,7 +105,7 @@ public class Drive extends CommandBase {
    * @param outputChassisSpeeds The field relative chassis speeds output consumer.
    * @param requirements The subsystems to require.
    */
-  public Drive(
+  public DriveTrajectory(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
       PIDController xController,
@@ -145,7 +145,7 @@ public class Drive extends CommandBase {
    *     the field.
    * @param requirements The subsystems to require.
    */
-  public Drive(
+  public DriveTrajectory(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
       SwerveDriveKinematics kinematics,
@@ -193,7 +193,7 @@ public class Drive extends CommandBase {
    * @param outputModuleStates The raw output module states from the position controllers.
    * @param requirements The subsystems to require.
    */
-  public Drive(
+  public DriveTrajectory(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
       SwerveDriveKinematics kinematics,
@@ -322,9 +322,9 @@ public class Drive extends CommandBase {
       Consumer<Pose2d> logTargetPose,
       Consumer<ChassisSpeeds> logSetpoint,
       BiConsumer<Translation2d, Rotation2d> logError) {
-    Drive.logActiveTrajectory = logActiveTrajectory;
-    Drive.logTargetPose = logTargetPose;
-    Drive.logSetpoint = logSetpoint;
-    Drive.logError = logError;
+    DriveTrajectory.logActiveTrajectory = logActiveTrajectory;
+    DriveTrajectory.logTargetPose = logTargetPose;
+    DriveTrajectory.logSetpoint = logSetpoint;
+    DriveTrajectory.logError = logError;
   }
 }
