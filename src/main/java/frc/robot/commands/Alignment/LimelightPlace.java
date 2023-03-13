@@ -13,7 +13,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConstants;
@@ -26,7 +25,6 @@ import frc.robot.subsystems.Swerve;
 
 public class LimelightPlace extends SequentialCommandGroup {
   /** Creates a new Place. */
-  
   Swerve swerve;
   Limelight limelight;
   Arm arm;
@@ -34,8 +32,8 @@ public class LimelightPlace extends SequentialCommandGroup {
   RobotContainer container;
 
   PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
-  private DriveTrajectory swerveCommand;
-  private DriveTrajectory swerveCommand2;
+  private DriveTrajectory firstAlign;
+  private DriveTrajectory secondAlign;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
@@ -46,7 +44,7 @@ public class LimelightPlace extends SequentialCommandGroup {
     this.arm = arm;
     this.elevator = elevator;
     
-    swerveCommand = new DriveTrajectory(
+    firstAlign = new DriveTrajectory(
       targetTraj,
       swerve::getPose,
       DrivetrainConstants.swerveKinematics,
@@ -57,7 +55,7 @@ public class LimelightPlace extends SequentialCommandGroup {
       swerve
     );
 
-    swerveCommand2 = new DriveTrajectory(
+    secondAlign = new DriveTrajectory(
       targetTraj,
       swerve::getPose,
       DrivetrainConstants.swerveKinematics,
@@ -73,34 +71,32 @@ public class LimelightPlace extends SequentialCommandGroup {
     addCommands(
       new AlignToAngle(swerve, 0),
 
-      new InstantCommand(() -> targetTraj = PathPlanner.generatePath(
-        new PathConstraints(1, 1),
-        
-        new PathPoint(
-          swerve.getPose().getTranslation(), 
-          Rotation2d.fromDegrees(0), 
-          swerve.getYaw()
-        ), //Sets starting point of path to current position.
-    
-        new PathPoint(
-          swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
-          Rotation2d.fromDegrees(0),
-          swerve.getYaw()
-        )
-        ),
+      new InstantCommand(() ->
+        targetTraj = GetAlignmentTrajectory(true, limelight),
         limelight
-    ),
+      ),
 
-    new InstantCommand(() -> swerveCommand.setTrajectory(targetTraj), swerve),
-
-    new PrintCommand("To Swerve Command!!!!!!!!!!!!!!!!!!!!!!!!"),
+      new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve),
     
-    swerveCommand,
+      firstAlign,
 
-    new PrintCommand("Swerve Complete!!!!!!!!!!!!!!!!!!!!!!!!"),
+      new InstantCommand(()-> 
+        targetTraj = GetAlignmentTrajectory(true, limelight),
+        limelight
+      ),
 
-    new InstantCommand(
-      ()-> targetTraj = PathPlanner.generatePath(
+      new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
+      secondAlign,
+
+      new Place(container, arm, elevator).getCommand()
+    );
+  }
+
+  private PathPlannerTrajectory GetAlignmentTrajectory(boolean isCone, Limelight limelight)
+  {
+    if (isCone)
+    {
+      return PathPlanner.generatePath(
         new PathConstraints(1, 1),
         
         new PathPoint(
@@ -114,14 +110,25 @@ public class LimelightPlace extends SequentialCommandGroup {
           Rotation2d.fromDegrees(0),
           swerve.getYaw()
         )
-      ),
-      limelight
-    ),
+      );
+    }
 
-    new InstantCommand(() -> swerveCommand2.setTrajectory(targetTraj)),
-    swerveCommand2,
-    new Place(container, arm, elevator).getCommand()
-      //Add command to drive forward to place and then release. Add code to align with tx offset when close. Add code for cones offset.
-    );
+    else{
+      return PathPlanner.generatePath(
+        new PathConstraints(1, 1),
+        
+        new PathPoint(
+          swerve.getPose().getTranslation(), 
+          Rotation2d.fromDegrees(0), 
+          swerve.getYaw()
+        ), //Sets starting point of path to current position.
+    
+        new PathPoint(
+          swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+          Rotation2d.fromDegrees(0),
+          swerve.getYaw()
+        )
+      );
+    }
   }
 }
