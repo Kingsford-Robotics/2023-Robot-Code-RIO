@@ -29,7 +29,6 @@ import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Alignment.AlignToAngle;
 import frc.robot.commands.Alignment.LimelightPlace;
-import frc.robot.commands.Alignment.PlaceAlign;
 import frc.robot.commands.ArmMotions.GroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
 import frc.robot.commands.ArmMotions.Place;
@@ -61,7 +60,6 @@ public class RobotContainer {
     private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
     private final GroundGrab m_GroundGrab = new GroundGrab(m_Arm, m_Elevator);
-    private final PlaceAlign m_AlignCone = new PlaceAlign(this, m_Swerve, m_Limelight);
 
     private final AlignToAngle m_AlignToAngle = new AlignToAngle(m_Swerve, 0.0);
 
