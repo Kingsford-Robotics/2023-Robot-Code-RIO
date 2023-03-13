@@ -26,7 +26,6 @@ import frc.robot.subsystems.Swerve;
 
 public class LimelightPlace extends SequentialCommandGroup {
   /** Creates a new Place. */
-
   Swerve swerve;
   Limelight limelight;
   Arm arm;
