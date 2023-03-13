@@ -25,24 +25,25 @@ import frc.robot.subsystems.Swerve;
 
 public class LimelightPlace extends SequentialCommandGroup {
   /** Creates a new Place. */
-  Swerve swerve;
-  Limelight limelight;
-  Arm arm;
-  Elevator elevator;
-  RobotContainer container;
+  private Swerve swerve;
+  private Arm arm;
+  private Elevator elevator;
 
-  PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
+  private Limelight limelight;
+  private RobotContainer container;
+
+  private PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
   private DriveTrajectory firstAlign;
   private DriveTrajectory secondAlign;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
     this.swerve = swerve;
-    this.limelight = limelight;
-    this.container = container;
-
     this.arm = arm;
     this.elevator = elevator;
+
+    this.limelight = limelight;
+    this.container = container;
     
     firstAlign = new DriveTrajectory(
       targetTraj,
