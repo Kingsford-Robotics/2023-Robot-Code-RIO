@@ -10,13 +10,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.ArmMotions.Place;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -32,8 +36,9 @@ public class LimelightPlace extends SequentialCommandGroup {
   Elevator elevator;
   RobotContainer container;
 
-  PathPlannerTrajectory targetTraj;
-  Command swerveCommand;
+  PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
+  private Drive swerveCommand;
+  private Drive swerveCommand2;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
@@ -43,6 +48,28 @@ public class LimelightPlace extends SequentialCommandGroup {
 
     this.arm = arm;
     this.elevator = elevator;
+    
+    swerveCommand = new Drive(
+      targetTraj,
+      swerve::getPose,
+      DrivetrainConstants.swerveKinematics,
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      swerve::setModuleStates,
+      swerve
+    );
+
+    swerveCommand2 = new Drive(
+      targetTraj,
+      swerve::getPose,
+      DrivetrainConstants.swerveKinematics,
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      swerve::setModuleStates,
+      swerve
+    );
 
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -67,11 +94,16 @@ public class LimelightPlace extends SequentialCommandGroup {
         limelight
     ),
 
-    new InstantCommand(() -> swerveCommand = swerve.followTrajectoryCommand(targetTraj, false)),
+    new InstantCommand(() -> swerveCommand.setTrajectory(targetTraj), swerve),
+
+    new PrintCommand("To Swerve Command!!!!!!!!!!!!!!!!!!!!!!!!"),
     
     swerveCommand,
-    
-    new InstantCommand(() -> targetTraj = PathPlanner.generatePath(
+
+    new PrintCommand("Swerve Complete!!!!!!!!!!!!!!!!!!!!!!!!"),
+
+    new InstantCommand(
+      ()-> targetTraj = PathPlanner.generatePath(
         new PathConstraints(1, 1),
         
         new PathPoint(
@@ -85,14 +117,15 @@ public class LimelightPlace extends SequentialCommandGroup {
           Rotation2d.fromDegrees(0),
           swerve.getYaw()
         )
-        ),
-        limelight
       ),
-      //This might dynamically create new command at runtime and run it I hope.
-      new InstantCommand(() -> swerve.followTrajectoryCommand(targetTraj, false)),
+      limelight
+    ),
 
-      new Place(container, arm, elevator).getCommand()
+    new InstantCommand(() -> swerveCommand2.setTrajectory(targetTraj)),
+    swerveCommand2,
+    new Place(container, arm, elevator).getCommand()
       //Add command to drive forward to place and then release. Add code to align with tx offset when close. Add code for cones offset.
     );
   }
+
 }
