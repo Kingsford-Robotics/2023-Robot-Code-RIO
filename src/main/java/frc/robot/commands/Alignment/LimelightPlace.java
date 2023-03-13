@@ -90,16 +90,16 @@ public class LimelightPlace extends SequentialCommandGroup {
       ),
 
       new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
-      secondAlign,
+      secondAlign
 
-      new ParallelCommandGroup(
+      /*new ParallelCommandGroup(
         new Place(container, arm, elevator).getCommand(),
         new SequentialCommandGroup(
           new WaitUntilCommand(() -> arm.getAngle().getDegrees() < 5.0),
           new InstantCommand(() -> thirdAlign.setTrajectory(GetPlaceTrajectory(true, 0, limelight))),
           thirdAlign
         )
-      )
+      )*/
       
     );
   }
