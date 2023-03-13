@@ -13,7 +13,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.DriveTrajectory;
@@ -35,6 +37,7 @@ public class LimelightPlace extends SequentialCommandGroup {
   private PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
   private DriveTrajectory firstAlign;
   private DriveTrajectory secondAlign;
+  private DriveTrajectory thirdAlign;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
@@ -89,9 +92,15 @@ public class LimelightPlace extends SequentialCommandGroup {
       new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
       secondAlign,
 
-      new Place(container, arm, elevator).getCommand()
-
-
+      new ParallelCommandGroup(
+        new Place(container, arm, elevator).getCommand(),
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> arm.getAngle().getDegrees() < 5.0),
+          new InstantCommand(() -> thirdAlign.setTrajectory(GetPlaceTrajectory(true, 0, limelight))),
+          thirdAlign
+        )
+      )
+      
     );
   }
 

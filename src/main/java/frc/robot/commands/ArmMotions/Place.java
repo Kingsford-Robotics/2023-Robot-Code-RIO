@@ -36,7 +36,6 @@ public class Place {
             new InstantCommand(() -> elevator.setElevatorHeight(15.5, 0.5), elevator)
         );
 
-
         commandList.add(
             new WaitUntilCommand(() -> elevator.isElevatorToPosition())
         );
