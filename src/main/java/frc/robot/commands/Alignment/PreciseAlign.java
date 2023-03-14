@@ -15,14 +15,10 @@ public class PreciseAlign extends CommandBase {
 
   private Swerve swerve;
   private Limelight limelight;
-
-  private PIDController thetaController;
   
   public PreciseAlign(Swerve swerve, Limelight limelight) {
     this.swerve = swerve;
     this.limelight = limelight;
-
-    thetaController = new PIDController(0.5, 0, 0);
 
     addRequirements(
       swerve,
@@ -38,7 +34,7 @@ public class PreciseAlign extends CommandBase {
   @Override
   public void execute() {
 
-    double theta = thetaController.calculate(limelight.getTx(), 0);
+    double theta = Math.signum(limelight.getAngle()) * Math.min(Math.abs(limelight.getAngle() * 0.1), 0.2);
 
     swerve.drive(
       new Translation2d(0.0, 0.0), 

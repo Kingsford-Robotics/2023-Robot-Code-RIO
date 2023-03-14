@@ -13,9 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.DriveTrajectory;
@@ -37,7 +35,7 @@ public class LimelightPlace extends SequentialCommandGroup {
   private PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
   private DriveTrajectory firstAlign;
   private DriveTrajectory secondAlign;
-  private DriveTrajectory backUp;
+  private DriveTrajectory driveForward;
 
   private AlignToAngle alignToAngle1;
   private AlignToAngle alignToAngle2;
@@ -75,7 +73,7 @@ public class LimelightPlace extends SequentialCommandGroup {
       swerve
     );
 
-    backUp = new DriveTrajectory(
+    driveForward = new DriveTrajectory(
       targetTraj,
       swerve::getPose,
       DrivetrainConstants.swerveKinematics,
@@ -110,17 +108,17 @@ public class LimelightPlace extends SequentialCommandGroup {
 
       alignToAngle2,
       new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
-      secondAlign
+      secondAlign,
+      new Place(container, arm, elevator).getCommand(),
 
-      /*new ParallelCommandGroup(
-        new Place(container, arm, elevator).getCommand(),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> arm.getAngle().getDegrees() < 5.0),
-          new InstantCommand(() -> thirdAlign.setTrajectory(GetPlaceTrajectory(true, 0, limelight))),
-          thirdAlign
-        )
-      )*/
-      
+      new InstantCommand(()-> 
+        targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),
+        limelight
+      ),
+
+      new InstantCommand(() -> driveForward.setTrajectory(targetTraj)),
+      driveForward,
+      preciseAlign
     );
   }
 
@@ -213,7 +211,7 @@ public class LimelightPlace extends SequentialCommandGroup {
           ), //Sets starting point of path to current position.
       
           new PathPoint(
-            swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+            swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.6, -limelight.getTx())),
             Rotation2d.fromDegrees(0),
             swerve.getYaw()
           )
