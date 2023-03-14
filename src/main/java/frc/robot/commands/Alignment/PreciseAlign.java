@@ -14,6 +14,8 @@ public class PreciseAlign extends CommandBase {
 
   private Swerve swerve;
   private Limelight limelight;
+
+  private double theta;
   
   public PreciseAlign(Swerve swerve, Limelight limelight) {
     this.swerve = swerve;
@@ -27,13 +29,15 @@ public class PreciseAlign extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    theta = 0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    double theta = Math.signum(limelight.getAngle()) * Math.min(Math.abs(limelight.getAngle() * 0.5), 0.3);
+    theta = -limelight.getAngle();
 
     swerve.drive(
       new Translation2d(0.0, theta), 
