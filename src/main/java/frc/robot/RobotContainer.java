@@ -90,10 +90,7 @@ public class RobotContainer {
         this.isFrontArm = isArmFront;
     }
 
-    public boolean isAlignRight()
-    {
-        return isAlignRight;
-    }
+    public boolean isAlignRight(){ return isAlignRight; }
 
     public void setIsAlignRight(boolean isAlignRight)
     {
@@ -175,6 +172,9 @@ public class RobotContainer {
 
         /*Main Driver Button Bindings*/
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
+
+        OIConstants.alignLeft.onTrue(new InstantCommand(() -> isAlignRight = false));
+        OIConstants.alignRight.onTrue(new InstantCommand(() -> isAlignRight = true));
         
         OIConstants.toggleFront.onTrue(
         new SequentialCommandGroup(
