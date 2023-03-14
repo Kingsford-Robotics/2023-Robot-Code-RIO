@@ -39,6 +39,9 @@ public class LimelightPlace extends SequentialCommandGroup {
   private DriveTrajectory secondAlign;
   private DriveTrajectory thirdAlign;
 
+  private AlignToAngle alignToAngle1;
+  private AlignToAngle alignToAngle2;
+
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
     this.swerve = swerve;
@@ -70,10 +73,13 @@ public class LimelightPlace extends SequentialCommandGroup {
       swerve
     );
 
+    alignToAngle1 = new AlignToAngle(swerve, 0);
+    alignToAngle2 = new AlignToAngle(swerve, 0);
+
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AlignToAngle(swerve, 0),
+      alignToAngle1,
 
       new InstantCommand(() ->
         targetTraj = GetAlignmentTrajectory(true, limelight),
@@ -89,6 +95,7 @@ public class LimelightPlace extends SequentialCommandGroup {
         limelight
       ),
 
+      alignToAngle2,
       new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
       secondAlign
 

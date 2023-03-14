@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -45,7 +46,11 @@ public class Place {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(80, 0.50), arm)
+            new WaitCommand(0.35)
+        );
+
+        commandList.add(
+            new InstantCommand(() -> arm.setArmAngle(80, 0.8), arm)
         );
 
         commandList.add(
@@ -54,8 +59,8 @@ public class Place {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(-2, 0.75), arm),
-                new InstantCommand(() -> arm.setArmAngle(10, 0.75), arm),
+                new InstantCommand(() -> arm.setArmAngle(-2, 0.8), arm),
+                new InstantCommand(() -> arm.setArmAngle(10, 0.8), arm),
                 () -> robotContainer.getLevel() == 2
             )
         );

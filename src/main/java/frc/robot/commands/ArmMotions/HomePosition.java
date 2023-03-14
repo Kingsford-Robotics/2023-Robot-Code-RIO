@@ -46,9 +46,8 @@ public class HomePosition {
             new WaitUntilCommand(() -> elevator.isElevatorToPosition())
         );
 
-
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(103, 0.75), arm)
+            new InstantCommand(() -> arm.setArmAngle(105, 0.8), arm)
         );
 
         commandList.add(
@@ -56,15 +55,15 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(99.0, 0.2), arm)
+            new InstantCommand(() -> elevator.setElevatorHeight(5.5, 0.5), elevator)
+        );
+
+        commandList.add(
+            new InstantCommand(() -> arm.setArmAngle(99.0, 0.3), arm)
         );
             
         commandList.add(
             new WaitUntilCommand(() -> arm.isArmToPosition()) 
-        );
-    
-        commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(5.3, 0.2), elevator)
         );
 
         commandList.add(
