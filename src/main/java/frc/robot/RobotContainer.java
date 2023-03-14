@@ -70,6 +70,7 @@ public class RobotContainer {
     private boolean isCone = true;
     private boolean autoAlign = true;
     private boolean isFrontArm = true;
+    private boolean isAlignRight;
     
     public int getLevel() { return level; }
 
@@ -87,6 +88,16 @@ public class RobotContainer {
 
     public void setIsArmFront(boolean isArmFront) {
         this.isFrontArm = isArmFront;
+    }
+
+    public boolean isAlignRight()
+    {
+        return isAlignRight;
+    }
+
+    public void setIsAlignRight(boolean isAlignRight)
+    {
+        this.isAlignRight = isAlignRight;
     }
 
     private FollowPathWithEvents driveForwardPlace;
@@ -149,7 +160,7 @@ public class RobotContainer {
         OIConstants.place.whileTrue(m_Place.getCommand());
         OIConstants.place.onFalse(m_StopArmElevator);
 
-        OIConstants.align.whileTrue(m_LimelightPlace);
+        OIConstants.align.whileTrue(m_LimelightPlace.getCommand());
 
         OIConstants.recalibrate.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
 

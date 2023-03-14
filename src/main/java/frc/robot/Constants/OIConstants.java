@@ -89,4 +89,7 @@ public class OIConstants {
     
     public static final POVButton increaseLevel = new POVButton(coDriverController, 0);
     public static final POVButton decreaseLevel = new POVButton(coDriverController, 180);
+
+    public static final POVButton alignRight = new POVButton(coDriverController, 270);
+    public static final POVButton alignLeft = new POVButton(coDriverController, 90);
 }

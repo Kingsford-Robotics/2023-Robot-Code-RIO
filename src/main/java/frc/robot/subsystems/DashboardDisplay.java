@@ -4,10 +4,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoSink;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,6 +46,8 @@ public class DashboardDisplay extends SubsystemBase {
   private GenericEntry targetZ;
 
   private GenericEntry heading;
+
+  private GenericEntry alignment;
 
   //private GenericEntry targetDistance;
   
@@ -99,6 +99,8 @@ public class DashboardDisplay extends SubsystemBase {
 
     heading = competitionTab.add("Heading", 0.0).getEntry();
 
+    alignment = competitionTab.add("Alignment", "Guide Right").getEntry();
+
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
   }
@@ -125,6 +127,15 @@ public class DashboardDisplay extends SubsystemBase {
       default:
         scoreLocation.setString("Unknown");
         break;
+    }
+
+    if(m_RobotContainer.isAlignRight())
+    {
+      alignment.setString("Guide Right");
+    }
+
+    else{
+      alignment.setString("Guide Left");
     }
 
     odometryX.setDouble(m_Swerve.getPose().getTranslation().getX());

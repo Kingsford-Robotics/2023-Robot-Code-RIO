@@ -74,6 +74,16 @@ public class Limelight extends SubsystemBase {
     return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("tx").getDouble(0.0);
   }
 
+  public boolean isTargetFound()
+  {
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("tv").getDouble(0.0) == 1.0;
+  }
+
+  public void setPipeline(int pipeline)
+  {
+    NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("pipeline").setNumber(pipeline);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
