@@ -105,8 +105,9 @@ public class LimelightPlace {
     );
 
     if (limelight.isTargetFound()) {
+      
       commandList.add(
-          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), limelight), limelight)
+          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight)
       );
 
       commandList.add(
@@ -122,7 +123,7 @@ public class LimelightPlace {
       );
 
       commandList.add(
-        new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(true, limelight),
+        new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight),
         limelight)
       );
 
@@ -172,7 +173,7 @@ public class LimelightPlace {
     return group;
   }
 
-  private PathPlannerTrajectory GetAlignmentTrajectory(boolean isCone, Limelight limelight) {
+  private PathPlannerTrajectory GetAlignmentTrajectory(boolean isCone, boolean isRightAlign, Limelight limelight) {
     if (isCone) {
       return PathPlanner.generatePath(
           new PathConstraints(1, 1),
@@ -183,7 +184,7 @@ public class LimelightPlace {
               swerve.getYaw()), // Sets starting point of path to current position.
 
           new PathPoint(
-              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, isRightAlign? -limelight.getTx() + 0.539: -limelight.getTx() - 0.539)),
               Rotation2d.fromDegrees(0),
               swerve.getYaw()));
     }
