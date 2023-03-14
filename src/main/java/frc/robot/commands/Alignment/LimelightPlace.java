@@ -37,10 +37,12 @@ public class LimelightPlace extends SequentialCommandGroup {
   private PathPlannerTrajectory targetTraj = new PathPlannerTrajectory();
   private DriveTrajectory firstAlign;
   private DriveTrajectory secondAlign;
-  private DriveTrajectory thirdAlign;
+  private DriveTrajectory backUp;
 
   private AlignToAngle alignToAngle1;
   private AlignToAngle alignToAngle2;
+
+  private PreciseAlign preciseAlign;
 
   public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
 
@@ -73,11 +75,22 @@ public class LimelightPlace extends SequentialCommandGroup {
       swerve
     );
 
+    backUp = new DriveTrajectory(
+      targetTraj,
+      swerve::getPose,
+      DrivetrainConstants.swerveKinematics,
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      new PIDController(7, 0, 0),
+      swerve::setModuleStates,
+      swerve
+    );
+
     alignToAngle1 = new AlignToAngle(swerve, 0);
     alignToAngle2 = new AlignToAngle(swerve, 0);
 
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+    preciseAlign = new PreciseAlign(swerve, limelight);
+
     addCommands(
       alignToAngle1,
 
