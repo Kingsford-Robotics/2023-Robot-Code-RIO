@@ -16,8 +16,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.DriveTrajectory;
@@ -98,76 +101,81 @@ public class LimelightPlace {
 
     // Sets pipeline AprilTag for initial alignment.
     commandList.add(
-        new InstantCommand(() -> limelight.setPipeline(0)));
+        new InstantCommand(() -> limelight.setPipeline(0), limelight));
+
+    commandList.add(
+      new WaitCommand(0.3)
+    );
+
+    //TODO: Stop command if target not found.
 
     commandList.add(
         alignToAngle1
     );
-
-    if (limelight.isTargetFound()) {
       
-      commandList.add(
-          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight)
-      );
+    commandList.add(
+        new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight)
+    );
 
-      commandList.add(
-          new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve)
-      );
+    commandList.add(
+        new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve)
+    );
 
-      commandList.add(
-          firstAlign
-      );
+    commandList.add(
+        firstAlign
+    );
 
-      commandList.add(
-        alignToAngle2
-      );
+    commandList.add(
+      alignToAngle2
+    );
 
-      commandList.add(
-        new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight),
-        limelight)
-      );
+    commandList.add(
+      new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight),
+      limelight)
+    );
 
-      commandList.add(
-        new InstantCommand(() -> secondAlign.setTrajectory(targetTraj))
-      );
+    commandList.add(
+      new InstantCommand(() -> secondAlign.setTrajectory(targetTraj))
+    );
 
-      commandList.add(
-        secondAlign
-      );
+    commandList.add(
+      secondAlign
+    );
 
-      commandList.add(
-          new Place(container, arm, elevator).getCommand()
-      );
+    commandList.add(
+        new Place(container, arm, elevator).getCommand()
+    );
 
-      commandList.add(
-        new InstantCommand(
-          () -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),
-          limelight
-        )
-      );
+    commandList.add(
+      new InstantCommand(
+        () -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),
+        limelight
+      )
+    );
 
-      commandList.add(
-          new InstantCommand(() -> driveForward.setTrajectory(targetTraj))
-      );
+    commandList.add(
+      new InstantCommand(() -> driveForward.setTrajectory(targetTraj))
+    );
 
-      commandList.add(
-          driveForward
-      );
+    commandList.add(
+      driveForward
+    );
 
-      if (container.getIsCone()) {
-        commandList.add(
-            new InstantCommand(() -> limelight.setPipeline(1))
-        );
-      }
+    commandList.add(
+      new InstantCommand(() -> limelight.setPipeline(container.getIsCone()? 1 : 0), limelight)
+    );
 
-      commandList.add(
-          preciseAlign
-      );
+    commandList.add(
+      new PrintCommand("Just before wait command....................")
+    );
 
-      commandList.add(
-        new InstantCommand(() -> limelight.setPipeline(0))
-      );
-    }
+    commandList.add(
+      new WaitCommand(0.5)
+    );
+
+    commandList.add(
+      preciseAlign
+    );
 
     group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));
     return group;
@@ -184,7 +192,7 @@ public class LimelightPlace {
               swerve.getYaw()), // Sets starting point of path to current position.
 
           new PathPoint(
-              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, isRightAlign? -limelight.getTx() + 0.539: -limelight.getTx() - 0.539)),
+              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, isRightAlign? -limelight.getTx() - 0.539: -limelight.getTx() + 0.539)),
               Rotation2d.fromDegrees(0),
               swerve.getYaw()));
     }
@@ -217,7 +225,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 
@@ -231,7 +239,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, -limelight.getTx())),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 
@@ -245,7 +253,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.6, -limelight.getTx())),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.6, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 

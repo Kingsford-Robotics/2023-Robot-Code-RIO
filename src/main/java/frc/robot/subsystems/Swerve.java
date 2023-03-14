@@ -146,6 +146,11 @@ public class Swerve extends SubsystemBase {
         return ((getYaw().getDegrees() + 180) % 360 - 180);
     }
 
+    public double getTilt()
+    {
+        return gyro.getRoll();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();

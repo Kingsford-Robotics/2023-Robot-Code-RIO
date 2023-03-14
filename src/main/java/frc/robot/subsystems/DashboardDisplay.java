@@ -49,6 +49,8 @@ public class DashboardDisplay extends SubsystemBase {
 
   private GenericEntry alignment;
 
+  private GenericEntry robotTilt;
+
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
@@ -101,6 +103,8 @@ public class DashboardDisplay extends SubsystemBase {
 
     alignment = competitionTab.add("Alignment", "Guide Right").getEntry();
 
+    robotTilt = competitionTab.add("Robot Tilt", 0.0).getEntry();
+
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
   }
@@ -145,5 +149,7 @@ public class DashboardDisplay extends SubsystemBase {
     targetZ.setDouble(m_Limelight.getTz());
 
     heading.setDouble(m_Swerve.getHeading());
+
+    robotTilt.setDouble(m_Swerve.getTilt());
   }
 }

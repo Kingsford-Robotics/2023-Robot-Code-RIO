@@ -33,11 +33,11 @@ public class PreciseAlign extends CommandBase {
   @Override
   public void execute() {
 
-    double theta = Math.signum(limelight.getAngle()) * Math.min(Math.abs(limelight.getAngle() * 0.1), 0.2);
+    double theta = Math.signum(limelight.getAngle()) * Math.min(Math.abs(limelight.getAngle() * 0.5), 0.3);
 
     swerve.drive(
-      new Translation2d(0.0, 0.0), 
-      theta, 
+      new Translation2d(0.0, theta), 
+      0.0, 
       false, 
       true
     );
@@ -50,6 +50,6 @@ public class PreciseAlign extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(limelight.getTx()) < 0.5;
+    return Math.abs(limelight.getTx()) < 0.3;
   }
 }

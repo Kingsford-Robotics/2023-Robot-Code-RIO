@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
@@ -90,5 +91,7 @@ public class Limelight extends SubsystemBase {
     txEntry.setDouble(getTx());
     tyEntry.setDouble(getTy());
     tzEntry.setDouble(getTz());
+
+    SmartDashboard.putBoolean("Target Found", isTargetFound());
   }
 }
