@@ -30,14 +30,13 @@ public class PreciseAlign extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    theta = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    theta = -limelight.getAngle();
+    theta = -Math.signum(limelight.getAngle()) * Math.min(Math.abs(limelight.getAngle()) * 0.1, 0.7);
 
     swerve.drive(
       new Translation2d(0.0, theta), 
@@ -54,6 +53,6 @@ public class PreciseAlign extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(limelight.getTx()) < 0.3;
+    return Math.abs(limelight.getAngle()) < 0.5;
   }
 }

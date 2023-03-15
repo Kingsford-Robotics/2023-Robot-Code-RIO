@@ -39,7 +39,7 @@ public class HomePosition {
         );
         
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.6), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 1), elevator)
         );
 
         commandList.add(
@@ -47,7 +47,7 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(105, 0.8), arm)
+            new InstantCommand(() -> arm.setArmAngle(105.5, 1.0), arm)
         );
 
         commandList.add(
@@ -55,11 +55,11 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(5.5, 0.5), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(5.5, 0.75), elevator)
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(99.0, 0.3), arm)
+            new InstantCommand(() -> arm.setArmAngle(103.0, 0.3), arm)
         );
             
         commandList.add(
@@ -75,11 +75,15 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(3.85, 0.2), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(3.85, 0.3), elevator)
         );
 
         commandList.add(
             new WaitUntilCommand(() -> elevator.isElevatorToPosition())
+        );
+
+        commandList.add(
+            new InstantCommand(() -> arm.close())
         );
 
         //Create sequential command group from list
