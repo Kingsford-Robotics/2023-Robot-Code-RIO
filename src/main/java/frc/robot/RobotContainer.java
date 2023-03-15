@@ -160,7 +160,7 @@ public class RobotContainer {
         OIConstants.place.whileTrue(m_Place.getCommand());
         OIConstants.place.onFalse(m_StopArmElevator);
 
-        OIConstants.align.whileTrue(m_PreciseAlign);
+        OIConstants.align.whileTrue(m_LimelightPlace.getCommand());
 
         OIConstants.recalibrate.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
 
