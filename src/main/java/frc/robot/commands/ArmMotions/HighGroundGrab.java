@@ -14,11 +14,11 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
 /** Add your docs here. */
-public class GroundGrab {
+public class HighGroundGrab {
     Arm arm;
     Elevator elevator;
 
-    public GroundGrab(Arm arm, Elevator elevator) {
+    public HighGroundGrab(Arm arm, Elevator elevator) {
         this.arm = arm;
         this.elevator = elevator;
     }
