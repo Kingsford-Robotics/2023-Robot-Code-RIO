@@ -40,7 +40,9 @@ public class OIConstants {
 
     //Drive Joysticks Buttons
     public static final JoystickButton resetGyro = new JoystickButton(driveJoystickRight, LogitechJoystick.button3);    //Resets the gyro to 0 degrees.
-    public static final JoystickButton toggleFront = new JoystickButton(driveJoystickRight, LogitechJoystick.button4);  //Toggles front from turntable to arm side of robot.
+    public static final JoystickButton calibrateArm = new JoystickButton(driveJoystickRight, LogitechJoystick.button4); //Calibrates the arm encoder from CANCoder.
+    public static final JoystickButton alignPlace = new JoystickButton(driveJoystickRight, LogitechJoystick.button5);  //Aligns the robot to the target and places the cone or cube.
+    public static final JoystickButton toggleFront = new JoystickButton(driveJoystickRight, LogitechJoystick.button6);  //Toggles front from turntable to arm side of robot.
 
     //Sets the center of the rotation to the selected wheel while held. Returns to center of robot when released.
     private static final JoystickButton centerOfRotationFrontLeft = new JoystickButton(driveJoystickLeft, LogitechJoystick.button5);
@@ -62,10 +64,6 @@ public class OIConstants {
         }
     };
 
-    //Alignment Buttons
-    public static final JoystickButton align = new JoystickButton(driveJoystickRight, LogitechJoystick.button5);
-    public static final JoystickButton recalibrate = new JoystickButton(driveJoystickRight, LogitechJoystick.button6);
-
     /*Operator Joystick Setup*/
     public static final XboxController coDriverController = new XboxController(2);
 
@@ -73,8 +71,8 @@ public class OIConstants {
     public static final JoystickButton openClaw = new JoystickButton(coDriverController, XboxController.Button.kLeftBumper.value);
     public static final JoystickButton closeClaw = new JoystickButton(coDriverController, XboxController.Button.kRightBumper.value);
 
-    public static final JoystickButton place = new JoystickButton(coDriverController, XboxController.Button.kY.value);
-    public static final JoystickButton groundPickup = new JoystickButton(coDriverController, XboxController.Button.kB.value);
+    public static final JoystickButton highGround = new JoystickButton(coDriverController, XboxController.Button.kY.value);
+    public static final JoystickButton lowGround = new JoystickButton(coDriverController, XboxController.Button.kB.value);
     public static final JoystickButton turntablePickup = new JoystickButton(coDriverController, XboxController.Button.kX.value);
     public static final JoystickButton armHome = new JoystickButton(coDriverController, XboxController.Button.kA.value);
 
@@ -85,7 +83,16 @@ public class OIConstants {
     public static final DoubleSupplier elevatorSpeed = () -> coDriverController.getRightY();
 
     //Set turntable speed to right and left triggers
-    public static final DoubleSupplier turntableSpeed = () -> coDriverController.getLeftTriggerAxis() > 0.1 ? coDriverController.getLeftTriggerAxis() : coDriverController.getRightTriggerAxis() > 0.1 ? -coDriverController.getRightTriggerAxis() : 0;
+    public static final DoubleSupplier turntableSpeed = () -> 
+    {
+        if (coDriverController.getLeftTriggerAxis() > 0.1) {
+            return coDriverController.getLeftTriggerAxis();
+        } else if (coDriverController.getRightTriggerAxis() > 0.1) {
+            return -coDriverController.getRightTriggerAxis();
+        } else {
+            return 0;
+        }
+    };
     
     public static final POVButton increaseLevel = new POVButton(coDriverController, 0);
     public static final POVButton decreaseLevel = new POVButton(coDriverController, 180);
