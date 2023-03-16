@@ -30,7 +30,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Alignment.AlignToAngle;
 import frc.robot.commands.Alignment.LimelightPlace;
 import frc.robot.commands.Alignment.PreciseAlign;
-import frc.robot.commands.ArmMotions.GroundGrab;
+import frc.robot.commands.ArmMotions.LowGroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
 import frc.robot.commands.ArmMotions.Place;
 import frc.robot.commands.ArmMotions.TurntableGrab;
@@ -40,10 +40,8 @@ import frc.robot.subsystems.Swerve;
 public class RobotContainer {
     /* Subsystems */
     private final Swerve m_Swerve = new Swerve();
-
     private final Arm m_Arm = new Arm();
     private final Elevator m_Elevator = new Elevator(0);
-
     private final Turntable m_Turntable = new Turntable();
     private final Ramp m_Ramp = new Ramp();
 
@@ -51,16 +49,15 @@ public class RobotContainer {
     private final Limelight m_Limelight = new Limelight();
     
     private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve, m_Arm, m_Limelight);
-
-    private final PneumaticsControlModule pcm = new PneumaticsControlModule(1);
+    //Check if I need pneumatics control module
 
     /* Commands */
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
-    private final HomePosition m_GoHome = new HomePosition(m_Arm, m_Elevator);
+    private final HomePosition m_HomePosition = new HomePosition(m_Arm, m_Elevator);
     private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
-    private final GroundGrab m_GroundGrab = new GroundGrab(m_Arm, m_Elevator);
+    private final LowGroundGrab m_GroundGrab = new LowGroundGrab(m_Arm, m_Elevator);
 
     private final AlignToAngle m_AlignToAngle = new AlignToAngle(m_Swerve, 0.0);
 
