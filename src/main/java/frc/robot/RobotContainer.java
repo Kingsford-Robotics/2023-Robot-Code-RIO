@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.OIConstants;
@@ -31,6 +32,7 @@ import frc.robot.commands.Alignment.AlignToAngle;
 import frc.robot.commands.Alignment.LimelightPlace;
 import frc.robot.commands.Alignment.PreciseAlign;
 import frc.robot.commands.ArmMotions.LowGroundGrab;
+import frc.robot.commands.ArmMotions.HighGroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
 import frc.robot.commands.ArmMotions.Place;
 import frc.robot.commands.ArmMotions.TurntableGrab;
@@ -45,11 +47,10 @@ public class RobotContainer {
     private final Turntable m_Turntable = new Turntable();
     private final Ramp m_Ramp = new Ramp();
 
-    private final JetsonXavier m_JetsonXavier = new JetsonXavier();
     private final Limelight m_Limelight = new Limelight();
     
     private final DashboardDisplay m_Display = new DashboardDisplay(this, m_Swerve, m_Arm, m_Limelight);
-    //Check if I need pneumatics control module
+    //TODO: Check if I need pneumatics control module
 
     /* Commands */
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
@@ -57,55 +58,41 @@ public class RobotContainer {
     private final HomePosition m_HomePosition = new HomePosition(m_Arm, m_Elevator);
     private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
-    private final LowGroundGrab m_GroundGrab = new LowGroundGrab(m_Arm, m_Elevator);
-
-    private final AlignToAngle m_AlignToAngle = new AlignToAngle(m_Swerve, 0.0);
-
     private final LimelightPlace m_LimelightPlace = new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator);
 
-    private final PreciseAlign m_PreciseAlign = new PreciseAlign(m_Swerve, m_Limelight);
+    private final LowGroundGrab m_LowGroundGrab = new LowGroundGrab(m_Arm, m_Elevator);
+    private final HighGroundGrab m_HighGroundGrab = new HighGroundGrab(m_Arm, m_Elevator);
 
     /*Control State Variables*/
     private int level = 2;    //Levels 0 - 2 represent FLOOR, MIDDLE, and TOP
     private boolean isCone = true;
     private boolean autoAlign = true;
     private boolean isFrontArm = true;
-    private boolean isAlignRight;
+    private boolean isAlignRight = true;
     
     public int getLevel() { return level; }
-
     public void setLevel(int level) { this.level = level; }
 
     public boolean getIsCone() { return isCone; }
-
     public void setIsCone(boolean isCone) { this.isCone = isCone; }
 
     public boolean getAutoAlign() { return autoAlign; }
-
     public void setAutoAlign(boolean autoAlign) { this.autoAlign = autoAlign; }
 
     public boolean getIsFrontArm() { return isFrontArm; }
-
-    public void setIsArmFront(boolean isArmFront) {
-        this.isFrontArm = isArmFront;
-    }
+    public void setIsArmFront(boolean isArmFront) { this.isFrontArm = isArmFront; }
 
     public boolean isAlignRight(){ return isAlignRight; }
+    public void setIsAlignRight(boolean isAlignRight){ this.isAlignRight = isAlignRight; }
 
-    public void setIsAlignRight(boolean isAlignRight)
-    {
-        this.isAlignRight = isAlignRight;
-    }
-
+    /*Auton Paths*/
     private FollowPathWithEvents driveForwardPlace;
     private FollowPathWithEvents crossLineDrive;
     private PathPlannerTrajectory traj1;
 
-
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
+    /*Robot Container Constructor*/
     public RobotContainer() {
+        
         m_Swerve.setDefaultCommand(
                 new TeleopSwerve(
                         m_Swerve,
@@ -150,37 +137,38 @@ public class RobotContainer {
         OIConstants.increaseLevel.onTrue(new InstantCommand(() -> level = Math.min(level + 1, 2)));
         OIConstants.decreaseLevel.onTrue(new InstantCommand(() -> level = Math.max(level - 1, 0)));
 
+        OIConstants.alignLeft.onTrue(new InstantCommand(() -> isAlignRight = false));
+        OIConstants.alignRight.onTrue(new InstantCommand(() -> isAlignRight = true));
+
         OIConstants.toggleConeCube.onTrue(new InstantCommand(() -> isCone = !isCone));
 
         OIConstants.toggleRamp.onTrue(new InstantCommand(() -> m_Ramp.toggleRamp()));
         
-        OIConstants.place.whileTrue(m_Place.getCommand());
-        OIConstants.place.onFalse(m_StopArmElevator);
-
-        OIConstants.align.whileTrue(m_LimelightPlace.getCommand());
-
-        OIConstants.recalibrate.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
-
         OIConstants.turntablePickup.whileTrue(m_GrabFromTurntable.getCommand());
         OIConstants.turntablePickup.onFalse(m_StopArmElevator);
         
-        OIConstants.groundPickup.whileTrue(m_GroundGrab.getCommand());
-        OIConstants.groundPickup.onFalse(m_StopArmElevator);
+        OIConstants.highGround.whileTrue(m_HighGroundGrab.getCommand());
+        OIConstants.highGround.onFalse(m_StopArmElevator);
 
-        OIConstants.armHome.whileTrue(m_GoHome.getCommand());
+        OIConstants.lowGround.whileTrue(m_LowGroundGrab.getCommand());
+        OIConstants.lowGround.onFalse(m_StopArmElevator);
+
+        OIConstants.armHome.whileTrue(m_HomePosition.getCommand());
         OIConstants.armHome.onFalse(m_StopArmElevator);
 
         /*Main Driver Button Bindings*/
         OIConstants.resetGyro.onTrue(new InstantCommand(() -> m_Swerve.zeroGyro()));
-
-        OIConstants.alignLeft.onTrue(new InstantCommand(() -> isAlignRight = false));
-        OIConstants.alignRight.onTrue(new InstantCommand(() -> isAlignRight = true));
         
         OIConstants.toggleFront.onTrue(
         new SequentialCommandGroup(
             new InstantCommand(() -> isFrontArm = !isFrontArm),
             new InstantCommand(() -> m_Swerve.setIsArmFront(isFrontArm))
         ));
+
+        OIConstants.alignPlace.whileTrue(new ConditionalCommand(m_LimelightPlace.getCommand(), m_Place.getCommand(), () -> autoAlign));
+        OIConstants.alignPlace.onFalse(m_StopArmElevator);
+
+        OIConstants.calibrateArm.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
     }
 
     private void configureAutoCommands()
