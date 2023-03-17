@@ -53,6 +53,8 @@ public class DashboardDisplay extends SubsystemBase {
 
   private GenericEntry targetTX;
 
+  private GenericEntry autoAlignOn;
+
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
@@ -108,9 +110,10 @@ public class DashboardDisplay extends SubsystemBase {
     robotTilt = competitionTab.add("Robot Tilt", 0.0).getEntry();
 
     targetTX = competitionTab.add("Target TX", 0.0).getEntry();
-
+    autoAlignOn = competitionTab.add("Auto Align On", true).getEntry();
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
+  
   }
 
   @Override
@@ -156,5 +159,7 @@ public class DashboardDisplay extends SubsystemBase {
 
     robotTilt.setDouble(m_Swerve.getTilt());
     targetTX.setDouble(m_Limelight.getAngle());
+
+    m_RobotContainer.setAutoAlign(autoAlignOn.getBoolean(false));
   }
 }

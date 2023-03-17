@@ -34,7 +34,7 @@ public class TurntableGrab {
 
         commandList.add(new InstantCommand(() -> arm.open(), arm));
 
-        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(7.8, 1.0), elevator));
+        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(8, 1.0), elevator));
 
         if (arm.getAngle().getDegrees() < 80.0)
         {
@@ -45,7 +45,7 @@ public class TurntableGrab {
 
         commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
 
-        commandList.add(new InstantCommand(() -> arm.setArmAngle(126.0, 0.5), arm));
+        commandList.add(new InstantCommand(() -> arm.setArmAngle(129.0, 0.5), arm));
 
         commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
 

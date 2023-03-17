@@ -23,7 +23,7 @@ public final class RobotConstants {
 
         /*Arm Encoder Values*/
         public static final int armEncoderID = 30;
-        public static final double armEncoderOffset = 107.0;
+        public static final double armEncoderOffset = 110.5;
 
         /*Arm Motion Magic Constants*/
         private static final double armMaxSpeed = 6380.0 * (2480.0 / 600.0); //Max speed in sensor units per 100ms
@@ -55,7 +55,7 @@ public final class RobotConstants {
 
         /*Arm Limits*/
         //Horizontal is 0, up is negative.
-        public static final double armMaxAngle = 140;
+        public static final double armMaxAngle = 138;
         public static final double armMinAngle = -10;
     }
   
