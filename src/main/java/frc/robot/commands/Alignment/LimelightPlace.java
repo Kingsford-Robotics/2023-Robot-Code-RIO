@@ -92,7 +92,6 @@ public class LimelightPlace {
     alignToAngle2 = new AlignToAngle(swerve, 0);
 
     preciseAlign = new PreciseAlign(swerve, limelight);
-
   }
 
   public SequentialCommandGroup getCommand() {
@@ -112,69 +111,28 @@ public class LimelightPlace {
     commandList.add(
         alignToAngle1
     );
-      
+     
     commandList.add(
-        new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight)
-    );
-
-    commandList.add(
-        new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve)
-    );
-
-    commandList.add(
-        firstAlign
-    );
-
-    commandList.add(
-      alignToAngle2
-    );
-
-    commandList.add(
-      new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight),
-      limelight)
-    );
-
-    commandList.add(
-      new InstantCommand(() -> secondAlign.setTrajectory(targetTraj))
-    );
-
-    commandList.add(
-      secondAlign
-    );
-
-    commandList.add(
-        new Place(container, arm, elevator).getCommand()
-    );
-
-    commandList.add(
-      new InstantCommand(
-        () -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),
-        limelight
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
+          new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve),
+          firstAlign,
+          alignToAngle2,
+          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
+          new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
+          secondAlign,
+          new Place(container, arm, elevator).getCommand(),
+          new InstantCommand(() -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),limelight),
+          new InstantCommand(() -> driveForward.setTrajectory(targetTraj)),
+          driveForward,
+          new InstantCommand(() -> limelight.setPipeline(container.getIsCone()? 1 : 0), limelight),
+          new WaitCommand(0.5),
+          preciseAlign
+        ),
+        new PrintCommand("Target Not Found"),
+        ()-> true
       )
-    );
-
-    commandList.add(
-      new InstantCommand(() -> driveForward.setTrajectory(targetTraj))
-    );
-
-    commandList.add(
-      driveForward
-    );
-
-    commandList.add(
-      new InstantCommand(() -> limelight.setPipeline(container.getIsCone()? 1 : 0), limelight)
-    );
-
-    commandList.add(
-      new PrintCommand("Just before wait command....................")
-    );
-
-    commandList.add(
-      new WaitCommand(0.5)
-    );
-
-    commandList.add(
-      preciseAlign
     );
 
     group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));

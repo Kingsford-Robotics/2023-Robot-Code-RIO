@@ -59,7 +59,7 @@ public class HomePosition {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(100.5, 0.3), arm)
+            new InstantCommand(() -> arm.setArmAngle(100.0, 0.3), arm)
         );
             
         commandList.add(
