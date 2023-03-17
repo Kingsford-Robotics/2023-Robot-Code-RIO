@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
@@ -20,10 +22,12 @@ public class TurntableGrab {
     
     Arm arm;
     Elevator elevator;
+    RobotContainer container;
 
-    public TurntableGrab(Arm arm, Elevator elevator) {
+    public TurntableGrab(Arm arm, Elevator elevator, RobotContainer container) {
         this.arm = arm;
         this.elevator = elevator;
+        this.container = container;
     }
 
     public SequentialCommandGroup getCommand() {
@@ -34,7 +38,13 @@ public class TurntableGrab {
 
         commandList.add(new InstantCommand(() -> arm.open(), arm));
 
-        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(8, 1.0), elevator));
+        commandList.add(
+            new ConditionalCommand(
+                new InstantCommand(() -> elevator.setElevatorHeight(8.65, 1.0), elevator),
+                new InstantCommand(() -> elevator.setElevatorHeight(9.0, 1.0), elevator),
+                () -> container.getIsCone()
+            )
+        );
 
         if (arm.getAngle().getDegrees() < 80.0)
         {
@@ -45,7 +55,13 @@ public class TurntableGrab {
 
         commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
 
-        commandList.add(new InstantCommand(() -> arm.setArmAngle(129.0, 0.5), arm));
+        commandList.add(
+            new ConditionalCommand(
+                new InstantCommand(() -> arm.setArmAngle(124.0, 1.0), arm),
+                new InstantCommand(() -> arm.setArmAngle(127.0, 1.0), arm),
+                () -> container.getIsCone()
+            )
+        );
 
         commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
 

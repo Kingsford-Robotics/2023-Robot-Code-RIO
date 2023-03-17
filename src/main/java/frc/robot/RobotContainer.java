@@ -53,7 +53,7 @@ public class RobotContainer {
     private final StopArmElevator m_StopArmElevator = new StopArmElevator(m_Arm, m_Elevator);
 
     private final HomePosition m_HomePosition = new HomePosition(m_Arm, m_Elevator);
-    private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator);
+    private final TurntableGrab m_GrabFromTurntable = new TurntableGrab(m_Arm, m_Elevator, this);
     private final Place m_Place = new Place(this, m_Arm, m_Elevator);
     private final LimelightPlace m_LimelightPlace = new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator);
 
