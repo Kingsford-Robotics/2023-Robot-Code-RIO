@@ -9,6 +9,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -32,15 +33,23 @@ public class LowGroundGrab {
 
         commandList.add(new InstantCommand(() -> arm.open(), arm));
 
-        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(10.0, 0.2), elevator));
+        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.6), elevator));
 
         commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
 
-        commandList.add(new InstantCommand(() -> arm.setArmAngle(73.0, 0.2), arm));
-
-        commandList.add(new InstantCommand(() -> arm.open(), arm));
+        commandList.add(new InstantCommand(() -> arm.setArmAngle(75.0, 0.6), arm));
 
         commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
+
+        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(5.5, 0.3), elevator));
+
+        commandList.add(new InstantCommand(() -> arm.setArmAngle(78.5, 0.3), arm));
+
+        commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
+
+        commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
+
+        commandList.add(new WaitCommand(0.3));
 
         commandList.add(new InstantCommand(() -> arm.extend(), arm));
 

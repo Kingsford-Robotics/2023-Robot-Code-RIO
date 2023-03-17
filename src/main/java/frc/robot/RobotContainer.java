@@ -14,7 +14,6 @@ import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,9 +27,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.Alignment.AlignToAngle;
 import frc.robot.commands.Alignment.LimelightPlace;
-import frc.robot.commands.Alignment.PreciseAlign;
 import frc.robot.commands.ArmMotions.LowGroundGrab;
 import frc.robot.commands.ArmMotions.HighGroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
