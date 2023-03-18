@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.HashMap;
 
+
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
@@ -22,7 +23,6 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.JetsonXavier;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
 import frc.robot.commands.StopArmElevator;
@@ -163,7 +163,7 @@ public class RobotContainer {
         ));
 
         OIConstants.alignPlace.whileTrue(new ConditionalCommand(m_LimelightPlace.getCommand(), m_Place.getCommand(), () -> autoAlign));
-        OIConstants.alignPlace.onFalse(m_StopArmElevator);
+        OIConstants.alignPlace.onFalse(new InstantCommand(() -> m_Limelight.setPipeline(0)));
 
         OIConstants.calibrateArm.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
     }

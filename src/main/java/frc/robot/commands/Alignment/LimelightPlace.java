@@ -108,9 +108,9 @@ public class LimelightPlace {
 
     //TODO: Stop command if target not found.
 
-    commandList.add(
-        alignToAngle1
-    );
+    //commandList.add(
+      //  alignToAngle1
+   // );
      
     commandList.add(
       new ConditionalCommand(
@@ -118,7 +118,7 @@ public class LimelightPlace {
           new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
           new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve),
           firstAlign,
-          alignToAngle2,
+         // alignToAngle2,
           new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
           new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
           secondAlign,
@@ -127,9 +127,10 @@ public class LimelightPlace {
           new InstantCommand(() -> driveForward.setTrajectory(targetTraj)),
           driveForward,
           new InstantCommand(() -> limelight.setPipeline(container.getIsCone()? 1 : 0), limelight),
-          new WaitCommand(0.5),
+          new WaitCommand(1.0),
           preciseAlign
         ),
+
         new PrintCommand("Target Not Found"),
         ()-> true
       )
@@ -150,7 +151,7 @@ public class LimelightPlace {
               swerve.getYaw()), // Sets starting point of path to current position.
 
           new PathPoint(
-              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, isRightAlign? -limelight.getTx() - 0.539: -limelight.getTx() + 0.539)),
+              swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1.2, isRightAlign? -limelight.getTx() - 0.539: -limelight.getTx() + 0.539)),
               Rotation2d.fromDegrees(0),
               swerve.getYaw()));
     }
@@ -183,7 +184,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, 0)),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.95, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 
@@ -197,7 +198,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 1, 0)),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.95, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 
@@ -211,7 +212,7 @@ public class LimelightPlace {
                 swerve.getYaw()), // Sets starting point of path to current position.
 
             new PathPoint(
-                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.6, 0)),
+                swerve.getPose().getTranslation().plus(new Translation2d(limelight.getTz() + 0.52, 0)),
                 Rotation2d.fromDegrees(0),
                 swerve.getYaw()));
 

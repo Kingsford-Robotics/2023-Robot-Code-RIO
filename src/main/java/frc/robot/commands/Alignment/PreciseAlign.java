@@ -53,6 +53,6 @@ public class PreciseAlign extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(limelight.getAngle()) < 0.5;
+    return Math.abs(limelight.getAngle()) < 1.0;
   }
 }
