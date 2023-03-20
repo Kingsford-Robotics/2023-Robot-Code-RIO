@@ -25,6 +25,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Ramp;
+import frc.robot.commands.LevelChargeStation;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Alignment.LimelightPlace;
@@ -204,6 +205,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         //return m_Swerve.followTrajectoryCommand(traj1, false);
-        return null;
+        return new LevelChargeStation(m_Swerve);
     }
 }
