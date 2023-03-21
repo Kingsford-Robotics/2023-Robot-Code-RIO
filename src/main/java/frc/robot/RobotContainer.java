@@ -211,11 +211,11 @@ public class RobotContainer {
             rightSwerve
             );
         
-        PathPlannerTrajectory chargeStatationTraj = PathPlanner.loadPath("placeLevel", new PathConstraints(2, 2));
+        PathPlannerTrajectory chargeStatationTraj = PathPlanner.loadPath("placeLevel", new PathConstraints(4, 4));
         Command level = m_Swerve.followTrajectoryCommand(chargeStatationTraj, true);
+
         chargeStation = new SequentialCommandGroup(
-            //new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator),
-            //level,
+            level,
             new LevelChargeStation(m_Swerve)
         );
     }

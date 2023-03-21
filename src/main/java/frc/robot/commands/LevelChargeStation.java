@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -32,7 +31,11 @@ public class LevelChargeStation extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    startLevelTime = Timer.getFPGATimestamp();
+    hasTitled =false;
+    secondTilt = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -52,7 +55,7 @@ public class LevelChargeStation extends CommandBase {
     }
 
     else{ 
-      xOutput = Math.signum(m_Swerve.getTilt()) * Math.min(Math.abs(m_Swerve.getTilt()) * (secondTilt? 0.05: 0.3), 0.6);
+      xOutput = Math.signum(m_Swerve.getTilt()) * Math.min(Math.abs(m_Swerve.getTilt()) * (secondTilt? 0.05: 0.45), 0.6);
        
       m_Swerve.drive(
           new Translation2d(xOutput, 0),
