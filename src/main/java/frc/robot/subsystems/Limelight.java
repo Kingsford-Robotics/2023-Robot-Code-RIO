@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
@@ -45,6 +46,8 @@ public class Limelight extends SubsystemBase {
     txEntry = limelightTab.add("tx", 0.0).getEntry();
     tyEntry = limelightTab.add("ty", 0.0).getEntry();
     tzEntry = limelightTab.add("tz", 0.0).getEntry();
+
+    
   }
 
   public void setLedMode(LedMode ledMode) {
@@ -54,22 +57,32 @@ public class Limelight extends SubsystemBase {
 
   public double getTx() {
     //Get target x pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[0];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[0];
   }
 
   public double getTy() {
     //Get target y pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[1];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[1];
   }
 
   public double getTz() {
     //Get target z pose
-    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("targetpose_cameraspace").getDoubleArray(new double[3])[2];
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("botpose_targetspace").getDoubleArray(new double[3])[2];
   }
 
   public double getAngle()
   {
     return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("tx").getDouble(0.0);
+  }
+
+  public boolean isTargetFound()
+  {
+    return NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("tv").getDouble(0.0) == 1.0;
+  }
+
+  public void setPipeline(int pipeline)
+  {
+    NetworkTableInstance.getDefault().getTable("limelight-rok").getEntry("pipeline").setNumber(pipeline);
   }
 
   @Override
@@ -78,5 +91,7 @@ public class Limelight extends SubsystemBase {
     txEntry.setDouble(getTx());
     tyEntry.setDouble(getTy());
     tzEntry.setDouble(getTz());
+
+    SmartDashboard.putBoolean("Target Found", isTargetFound());
   }
 }

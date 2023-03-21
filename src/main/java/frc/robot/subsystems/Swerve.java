@@ -141,6 +141,16 @@ public class Swerve extends SubsystemBase {
        return (DrivetrainConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
+    public double getHeading()
+    {
+        return ((getYaw().getDegrees() + 180) % 360 - 180);
+    }
+
+    public double getTilt()
+    {
+        return gyro.getRoll();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -188,11 +198,11 @@ public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFir
             traj, 
             this::getPose, // Pose supplier
             DrivetrainConstants.swerveKinematics, // SwerveDriveKinematics
-            new PIDController(1, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-            new PIDController(1, 0, 0), // Y controller (usually the same values as X controller)
-            new PIDController(2, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(7, 0.4, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+            new PIDController(7, 0.4, 0), // Y controller (usually the same values as X controller)
+            new PIDController(5, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
             this::setModuleStates, // Module states consumer
-            false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             this // Requires this drive subsystem
         )
     );

@@ -2,13 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Alignment;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class TestPathPlanner extends CommandBase {
-  /** Creates a new TestPathPlanner. */
-  public TestPathPlanner() {
+public class GroundAlign extends CommandBase {
+  /** Creates a new GroundAlign. */
+  public GroundAlign() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

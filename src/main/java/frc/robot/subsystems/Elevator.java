@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
+
+//TODO: Consider adding top calibration back in.
 public class Elevator extends SubsystemBase {
   /*Creates new Elevator */
   private TalonFX elevatorMotor;
@@ -93,7 +95,7 @@ public class Elevator extends SubsystemBase {
     {
       speed = 0;
     }
-    else if((getBottomLimitSwitch() || getElevatorPosition() < RobotConstants.ElevatorConstants.safeZone) && speed < 0)
+    else if(getBottomLimitSwitch() && speed < 0)
     {
       speed = 0;
     }

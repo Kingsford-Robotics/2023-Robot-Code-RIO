@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.ArmMotions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,11 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 
 /** Add your docs here. */
-public class GoHome {
+public class HomePosition {
     Arm arm;
     Elevator elevator;
 
-    public GoHome(Arm arm, Elevator elevator) {
+    public HomePosition(Arm arm, Elevator elevator) {
         this.arm = arm;
         this.elevator = elevator;
     }
@@ -39,16 +39,15 @@ public class GoHome {
         );
         
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 0.7), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(7.5, 1), elevator)
         );
 
         commandList.add(
             new WaitUntilCommand(() -> elevator.isElevatorToPosition())
         );
 
-
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(113, 0.5), arm)
+            new InstantCommand(() -> arm.setArmAngle(103.0, 1.0), arm)
         );
 
         commandList.add(
@@ -56,15 +55,27 @@ public class GoHome {
         );
 
         commandList.add(
-            new InstantCommand(() -> arm.setArmAngle(97.5, 0.2), arm)
+            new InstantCommand(() -> elevator.setElevatorHeight(5.5, 0.75), elevator)
+        );
+
+        commandList.add(
+            new InstantCommand(() -> arm.setArmAngle(100.0, 0.3), arm)
         );
             
         commandList.add(
             new WaitUntilCommand(() -> arm.isArmToPosition()) 
         );
-    
+
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(5.3, 0.2), elevator)
+            new WaitUntilCommand(() -> elevator.isElevatorToPosition())
+        );
+
+        commandList.add(
+            new WaitCommand(0.25)
+        );
+
+        commandList.add(
+            new InstantCommand(() -> elevator.setElevatorHeight(3.85, 0.3), elevator)
         );
 
         commandList.add(
@@ -72,15 +83,7 @@ public class GoHome {
         );
 
         commandList.add(
-            new WaitCommand(0.5)
-        );
-
-        commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(3.85, 0.2), elevator)
-        );
-
-        commandList.add(
-            new WaitUntilCommand(() -> elevator.isElevatorToPosition())
+            new InstantCommand(() -> arm.close())
         );
 
         //Create sequential command group from list
