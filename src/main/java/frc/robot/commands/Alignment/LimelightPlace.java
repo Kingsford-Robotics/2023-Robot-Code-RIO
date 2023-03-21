@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -30,7 +31,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 
-public class LimelightPlace {
+public class LimelightPlace extends SequentialCommandGroup{
   /** Creates a new Place. */
   private Swerve swerve;
   private Arm arm;
@@ -49,7 +50,7 @@ public class LimelightPlace {
 
   private PreciseAlign preciseAlign;
 
-  public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator) {
+  public LimelightPlace(Swerve swerve, Limelight limelight, RobotContainer container, Arm arm, Elevator elevator){
 
     this.swerve = swerve;
     this.arm = arm;
@@ -92,37 +93,23 @@ public class LimelightPlace {
     alignToAngle2 = new AlignToAngle(swerve, 0);
 
     preciseAlign = new PreciseAlign(swerve, limelight);
-  }
 
-  public SequentialCommandGroup getCommand() {
-    List<CommandBase> commandList = new ArrayList<CommandBase>();
-    SequentialCommandGroup group;
-
-    // Sets pipeline AprilTag for initial alignment.
-    commandList.add(
-        new InstantCommand(() -> limelight.setPipeline(0), limelight));
-
-    commandList.add(
-      new WaitCommand(0.3)
-    );
-
-    //TODO: Stop command if target not found.
-
-    //commandList.add(
-      //  alignToAngle1
-   // );
-     
-    commandList.add(
+    addCommands(
+      new InstantCommand(() -> limelight.setPipeline(0), limelight),
+      new WaitCommand(0.3),
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
-          new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve),
-          firstAlign,
+          new ParallelCommandGroup(
+          new Place(container, arm, elevator).getCommand(),
+          new SequentialCommandGroup(
+            new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
+            new InstantCommand(() -> firstAlign.setTrajectory(targetTraj), swerve),
+            firstAlign)
+          ),
          // alignToAngle2,
           new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
           new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
           secondAlign,
-          new Place(container, arm, elevator).getCommand(),
           new InstantCommand(() -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),limelight),
           new InstantCommand(() -> driveForward.setTrajectory(targetTraj)),
           driveForward,
@@ -132,18 +119,15 @@ public class LimelightPlace {
         ),
 
         new PrintCommand("Target Not Found"),
-        ()-> true
+        ()-> limelight.isTargetFound()
       )
     );
-
-    group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));
-    return group;
   }
 
   private PathPlannerTrajectory GetAlignmentTrajectory(boolean isCone, boolean isRightAlign, Limelight limelight) {
     if (isCone) {
       return PathPlanner.generatePath(
-          new PathConstraints(1, 1),
+          new PathConstraints(4, 1.7),
 
           new PathPoint(
               swerve.getPose().getTranslation(),
@@ -158,7 +142,7 @@ public class LimelightPlace {
 
     else {
       return PathPlanner.generatePath(
-          new PathConstraints(1, 1),
+          new PathConstraints(4, 1.7),
 
           new PathPoint(
               swerve.getPose().getTranslation(),
@@ -176,7 +160,7 @@ public class LimelightPlace {
     switch (level) {
       case 0:
         return PathPlanner.generatePath(
-            new PathConstraints(1, 1),
+            new PathConstraints(2, 1),
 
             new PathPoint(
                 swerve.getPose().getTranslation(),
@@ -190,7 +174,7 @@ public class LimelightPlace {
 
       case 1:
         return PathPlanner.generatePath(
-            new PathConstraints(1, 1),
+            new PathConstraints(2, 1),
 
             new PathPoint(
                 swerve.getPose().getTranslation(),
@@ -204,7 +188,7 @@ public class LimelightPlace {
 
       case 2:
         return PathPlanner.generatePath(
-            new PathConstraints(1, 1),
+            new PathConstraints(2, 1),
 
             new PathPoint(
                 swerve.getPose().getTranslation(),

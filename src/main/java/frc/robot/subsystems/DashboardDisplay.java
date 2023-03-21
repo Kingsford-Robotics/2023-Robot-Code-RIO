@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -58,6 +59,8 @@ public class DashboardDisplay extends SubsystemBase {
   //private GenericEntry targetDistance;
   
   private Field2d field = new Field2d();
+
+  private SendableChooser mChooser;
 
   public DashboardDisplay(RobotContainer m_RobotContainer, Swerve m_Swerve, Arm m_arm, Limelight m_Limelight) {
     /*Subsystem Instantiation */
@@ -113,7 +116,6 @@ public class DashboardDisplay extends SubsystemBase {
     autoAlignOn = competitionTab.add("Auto Align On", true).getEntry();
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
-  
   }
 
   @Override

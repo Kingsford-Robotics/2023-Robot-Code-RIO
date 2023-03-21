@@ -15,10 +15,15 @@ import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Arm;
@@ -29,6 +34,7 @@ import frc.robot.commands.LevelChargeStation;
 import frc.robot.commands.StopArmElevator;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Alignment.LimelightPlace;
+import frc.robot.commands.Alignment.PreciseAlign;
 import frc.robot.commands.ArmMotions.LowGroundGrab;
 import frc.robot.commands.ArmMotions.HighGroundGrab;
 import frc.robot.commands.ArmMotions.HomePosition;
@@ -84,9 +90,11 @@ public class RobotContainer {
     public void setIsAlignRight(boolean isAlignRight){ this.isAlignRight = isAlignRight; }
 
     /*Auton Paths*/
-    private FollowPathWithEvents driveForwardPlace;
-    private FollowPathWithEvents crossLineDrive;
-    private PathPlannerTrajectory traj1;
+    private SequentialCommandGroup leftPlace;
+    private SequentialCommandGroup rightPlace;
+    private SequentialCommandGroup chargeStation;
+
+    SendableChooser<SequentialCommandGroup> chooser;
 
     /*Robot Container Constructor*/
     public RobotContainer() {
@@ -111,12 +119,21 @@ public class RobotContainer {
         );
 
         m_Turntable.setDefaultCommand(
-            new InstantCommand(() -> m_Turntable.setTurntableSpeed(OIConstants.turntableSpeed.getAsDouble() * 0.5), m_Turntable)
+            new InstantCommand(() -> m_Turntable.setTurntableSpeed(OIConstants.turntableSpeed.getAsDouble() * 1.0), m_Turntable)
         );
 
         // Configure the button bindings
         configureButtonBindings();
         configureAutoCommands();  
+
+        chooser = new SendableChooser<SequentialCommandGroup>();
+        chooser.addOption("Left Place", leftPlace);
+        chooser.addOption("Right Place", rightPlace);
+        chooser.addOption("Level", chargeStation);
+
+        ShuffleboardTab tab;
+        tab = Shuffleboard.getTab("Competition");
+        tab.add("Auton", chooser);
     }
 
     /**
@@ -163,7 +180,7 @@ public class RobotContainer {
             new InstantCommand(() -> m_Swerve.setIsArmFront(isFrontArm))
         ));
 
-        OIConstants.alignPlace.whileTrue(new ConditionalCommand(m_LimelightPlace.getCommand(), m_Place.getCommand(), () -> autoAlign));
+        OIConstants.alignPlace.whileTrue(new ConditionalCommand(m_LimelightPlace, m_Place.getCommand(), () -> autoAlign));
         OIConstants.alignPlace.onFalse(new InstantCommand(() -> m_Limelight.setPipeline(0)));
 
         OIConstants.calibrateArm.onTrue(new InstantCommand(() -> m_Arm.resetToAbsolute()));
@@ -171,40 +188,36 @@ public class RobotContainer {
 
     private void configureAutoCommands()
     {
-        /*Pathplanner Setup*/
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        eventMap.put(
-            "place", 
-            null
+        PathPlannerTrajectory leftPlaceTraj = PathPlanner.loadPath("leftPlace", new PathConstraints(2, 2));
+        Command leftSwerve = m_Swerve.followTrajectoryCommand(leftPlaceTraj, true);
+        
+        leftPlace = new SequentialCommandGroup(
+            new InstantCommand(() -> isCone = false),
+            new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator).withTimeout(8.0),
+            new InstantCommand(() -> m_Arm.open(), m_Arm),
+            new WaitCommand(0.5),
+            new HomePosition(m_Arm, m_Elevator).getCommand(),
+            leftSwerve
             );
 
-        //List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("leftSimple", new PathConstraints(2, 3));
-        PathPlannerTrajectory driveForward = PathPlanner.loadPath("driveForward", new PathConstraints(2, 2));
+        PathPlannerTrajectory rightPlaceTraj = PathPlanner.loadPath("rightPlace", new PathConstraints(2, 2));
+        Command rightSwerve = m_Swerve.followTrajectoryCommand(rightPlaceTraj, true);
+        rightPlace = new SequentialCommandGroup(
+            new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator),
+            rightSwerve
+            );
         
-        driveForwardPlace = new FollowPathWithEvents(
-            m_Swerve.followTrajectoryCommand(driveForward, true),
-            driveForward.getMarkers(), 
-            eventMap
-        );
-
-        PathPlannerTrajectory crossLine = PathPlanner.loadPath("crossLine", new PathConstraints(2, 2));
-
-        crossLineDrive = new FollowPathWithEvents(
-            m_Swerve.followTrajectoryCommand(crossLine, true),
-            crossLine.getMarkers(), 
-            eventMap
-        );
-
-        traj1 = PathPlanner.generatePath(
-            new PathConstraints(0.5, 0.5), 
-            new PathPoint(new Translation2d(0.0, 0), Rotation2d.fromDegrees(0)), // position, heading
-            new PathPoint(new Translation2d(1.5, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(90)) // position, heading
+        PathPlannerTrajectory chargeStatationTraj = PathPlanner.loadPath("placeLevel", new PathConstraints(2, 2));
+        Command level = m_Swerve.followTrajectoryCommand(chargeStatationTraj, true);
+        chargeStation = new SequentialCommandGroup(
+            new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator),
+            level,
+            new LevelChargeStation(m_Swerve)
         );
     }
 
     public Command getAutonomousCommand() {
-        //return m_Swerve.followTrajectoryCommand(traj1, false);
-        return new LevelChargeStation(m_Swerve);
+
+        return chooser.getSelected();
     }
 }
