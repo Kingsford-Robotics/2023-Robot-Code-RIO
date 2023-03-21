@@ -52,7 +52,7 @@ public class LevelChargeStation extends CommandBase {
     }
 
     else{ 
-      xOutput = Math.signum(m_Swerve.getTilt()) * Math.min(Math.abs(m_Swerve.getTilt()) * (secondTilt? 0.06: 0.3), 0.7);
+      xOutput = Math.signum(m_Swerve.getTilt()) * Math.min(Math.abs(m_Swerve.getTilt()) * (secondTilt? 0.05: 0.3), 0.6);
        
       m_Swerve.drive(
           new Translation2d(xOutput, 0),
