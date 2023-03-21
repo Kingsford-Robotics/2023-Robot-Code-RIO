@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.OIConstants;
@@ -193,11 +194,14 @@ public class RobotContainer {
         
         leftPlace = new SequentialCommandGroup(
             new InstantCommand(() -> isCone = false),
+            new InstantCommand(() -> m_Arm.close()),
             new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator).withTimeout(8.0),
             new InstantCommand(() -> m_Arm.open(), m_Arm),
             new WaitCommand(0.5),
-            new HomePosition(m_Arm, m_Elevator).getCommand(),
-            leftSwerve
+            new ParallelCommandGroup(
+                new HomePosition(m_Arm, m_Elevator).getCommand(),
+                leftSwerve
+            )
             );
 
         PathPlannerTrajectory rightPlaceTraj = PathPlanner.loadPath("rightPlace", new PathConstraints(2, 2));

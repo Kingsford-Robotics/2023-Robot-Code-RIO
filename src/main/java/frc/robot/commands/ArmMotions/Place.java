@@ -59,7 +59,7 @@ public class Place {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(-2, 0.8), arm),
+                new InstantCommand(() -> arm.setArmAngle(0.0, 0.8), arm),
                 new ConditionalCommand(
                     new InstantCommand(() -> arm.setArmAngle(10, 0.8), arm),
                     new InstantCommand(() -> arm.setArmAngle(30, 0.8), arm),

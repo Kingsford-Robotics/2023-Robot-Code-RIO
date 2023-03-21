@@ -89,9 +89,6 @@ public class LimelightPlace extends SequentialCommandGroup{
         swerve::setModuleStates,
         swerve);
 
-    alignToAngle1 = new AlignToAngle(swerve, 0);
-    alignToAngle2 = new AlignToAngle(swerve, 0);
-
     preciseAlign = new PreciseAlign(swerve, limelight);
 
     addCommands(
@@ -107,9 +104,9 @@ public class LimelightPlace extends SequentialCommandGroup{
             firstAlign)
           ),
          // alignToAngle2,
-          new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
+          /*new InstantCommand(() -> targetTraj = GetAlignmentTrajectory(container.getIsCone(), container.isAlignRight(), limelight), limelight),
           new InstantCommand(() -> secondAlign.setTrajectory(targetTraj)),
-          secondAlign,
+          secondAlign,*/
           new InstantCommand(() -> targetTraj = GetPlaceTrajectory(container.getIsCone(), container.getLevel(), limelight),limelight),
           new InstantCommand(() -> driveForward.setTrajectory(targetTraj)),
           driveForward,
