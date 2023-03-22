@@ -206,10 +206,18 @@ public class RobotContainer {
 
         PathPlannerTrajectory rightPlaceTraj = PathPlanner.loadPath("rightPlace", new PathConstraints(2, 2));
         Command rightSwerve = m_Swerve.followTrajectoryCommand(rightPlaceTraj, true);
+
         rightPlace = new SequentialCommandGroup(
-            new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator),
-            rightSwerve
-            );
+            new InstantCommand(() -> isCone = false),
+            new InstantCommand(() -> m_Arm.close()),
+            new LimelightPlace(m_Swerve, m_Limelight, this, m_Arm, m_Elevator).withTimeout(8.0),
+            new InstantCommand(() -> m_Arm.open(), m_Arm),
+            new WaitCommand(0.5),
+            new ParallelCommandGroup(
+                new HomePosition(m_Arm, m_Elevator).getCommand(),
+                rightSwerve
+            )
+        );
         
         PathPlannerTrajectory chargeStatationTraj = PathPlanner.loadPath("placeLevel", new PathConstraints(4, 4));
         Command level = m_Swerve.followTrajectoryCommand(chargeStatationTraj, true);
