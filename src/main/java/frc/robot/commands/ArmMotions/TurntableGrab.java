@@ -10,8 +10,8 @@ import java.util.List;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -40,34 +40,38 @@ public class TurntableGrab {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> elevator.setElevatorHeight(8.65, 1.0), elevator),
-                new InstantCommand(() -> elevator.setElevatorHeight(9.0, 1.0), elevator),
-                () -> container.getIsCone()
+                new InstantCommand(() -> arm.setArmAngle(75, 1.0), arm),
+                new PrintCommand("Arm greater than 80 degrees."),
+                () -> arm.getAngle().getDegrees() < 75
             )
         );
 
-        if (arm.getAngle().getDegrees() < 80.0)
-        {
-            commandList.add(
-                new InstantCommand(() -> arm.setArmAngle(80, 1.0), arm)
-            );
-        }
+        commandList.add(new InstantCommand(() -> elevator.setElevatorHeight(9.0, 0.8)));
 
         commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
+        commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(124.0, 1.0), arm),
-                new InstantCommand(() -> arm.setArmAngle(126.0, 1.0), arm),
+                new InstantCommand(() -> arm.setArmAngle(120.5, 1.0), arm),
+                new InstantCommand(() -> arm.setArmAngle(123.0, 1.0), arm),
                 () -> container.getIsCone()
             )
         );
 
         commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
 
-        commandList.add(new WaitCommand(0.3));
-
         commandList.add(new InstantCommand(() -> arm.extend(), arm));
+
+        commandList.add(
+            new ConditionalCommand(
+                new InstantCommand(() -> elevator.setElevatorHeight(8.65, 0.8), elevator),
+                new InstantCommand(() -> elevator.setElevatorHeight(9.0, 0.8), elevator),
+                () -> container.getIsCone()
+            )
+        );
+
+        commandList.add(new WaitUntilCommand(() -> elevator.isElevatorToPosition()));
 
         group = new SequentialCommandGroup(commandList.toArray(new CommandBase[commandList.size()]));
         return group;

@@ -34,7 +34,7 @@ public class Place {
         SequentialCommandGroup group;
 
         commandList.add(
-            new InstantCommand(() -> elevator.setElevatorHeight(15.5, 0.6), elevator)
+            new InstantCommand(() -> elevator.setElevatorHeight(15.4, 0.7), elevator)
         );
 
         commandList.add(
@@ -59,10 +59,10 @@ public class Place {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(0.0, 0.8), arm),
+                new InstantCommand(() -> arm.setArmAngle(0.0, 1.0), arm),
                 new ConditionalCommand(
-                    new InstantCommand(() -> arm.setArmAngle(10, 0.8), arm),
-                    new InstantCommand(() -> arm.setArmAngle(30, 0.8), arm),
+                    new InstantCommand(() -> arm.setArmAngle(10, 1.0), arm),
+                    new InstantCommand(() -> arm.setArmAngle(30, 1.0), arm),
                     () -> robotContainer.getLevel() == 1
                 ),
 
