@@ -53,7 +53,7 @@ public class TurntableGrab {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(120.5, 1.0), arm),
+                new InstantCommand(() -> arm.setArmAngle(122.0, 1.0), arm),
                 new InstantCommand(() -> arm.setArmAngle(123.0, 1.0), arm),
                 () -> container.getIsCone()
             )
