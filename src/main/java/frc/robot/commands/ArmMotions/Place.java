@@ -59,9 +59,9 @@ public class Place {
 
         commandList.add(
             new ConditionalCommand(
-                new InstantCommand(() -> arm.setArmAngle(-3.0, 1.0), arm),
+                new InstantCommand(() -> arm.setArmAngle(-11.0, 1.0), arm),
                 new ConditionalCommand(
-                    new InstantCommand(() -> arm.setArmAngle(10, 1.0), arm),
+                    new InstantCommand(() -> arm.setArmAngle(5, 1.0), arm),
                     new InstantCommand(() -> arm.setArmAngle(30, 1.0), arm),
                     () -> robotContainer.getLevel() == 1
                 ),

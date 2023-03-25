@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Arm;
@@ -62,6 +63,8 @@ public class TurntableGrab {
         commandList.add(new WaitUntilCommand(() -> arm.isArmToPosition()));
 
         commandList.add(new InstantCommand(() -> arm.extend(), arm));
+
+        commandList.add(new WaitCommand(0.3));
 
         commandList.add(
             new ConditionalCommand(

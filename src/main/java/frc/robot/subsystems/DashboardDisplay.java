@@ -39,20 +39,11 @@ public class DashboardDisplay extends SubsystemBase {
   private GenericEntry gyroAngle;
   private GenericEntry targetType;
   private GenericEntry scoreLocation;
-  private GenericEntry isArmFront;
-  private GenericEntry odometryX;
-  private GenericEntry odometryY;
-
-  private GenericEntry targetX;
-  private GenericEntry targetZ;
+  private GenericEntry isArmFront;;
 
   private GenericEntry heading;
 
   private GenericEntry alignment;
-
-  private GenericEntry robotTilt;
-
-  private GenericEntry targetTX;
 
   private GenericEntry autoAlignOn;
 
@@ -100,19 +91,8 @@ public class DashboardDisplay extends SubsystemBase {
     scoreLocation = competitionTab.add("Score Location", "Unknown").getEntry();
     isArmFront = competitionTab.add("Arm Front", false).getEntry();
 
-    odometryX = competitionTab.add("Odometry X", 0.0).getEntry();
-    odometryY = competitionTab.add("Odometry Y", 0.0).getEntry();
-
-    targetX = competitionTab.add("Target X", 0.0).getEntry();
-    targetZ = competitionTab.add("Target Z", 0.0).getEntry();
-
-    heading = competitionTab.add("Heading", 0.0).getEntry();
-
     alignment = competitionTab.add("Alignment", "Guide Right").getEntry();
 
-    robotTilt = competitionTab.add("Robot Tilt", 0.0).getEntry();
-
-    targetTX = competitionTab.add("Target TX", 0.0).getEntry();
     autoAlignOn = competitionTab.add("Auto Align On", true).getEntry();
 
     competitionTab.add("Toggle Arm", new InstantCommand(() -> m_arm.toggleExtension()));
@@ -150,17 +130,6 @@ public class DashboardDisplay extends SubsystemBase {
     else{
       alignment.setString("Guide Left");
     }
-
-    odometryX.setDouble(m_Swerve.getPose().getTranslation().getX());
-    odometryY.setDouble(m_Swerve.getPose().getTranslation().getY());
-
-    targetX.setDouble(m_Limelight.getTx());
-    targetZ.setDouble(m_Limelight.getTz());
-
-    heading.setDouble(m_Swerve.getHeading());
-
-    robotTilt.setDouble(m_Swerve.getTilt());
-    targetTX.setDouble(m_Limelight.getAngle());
 
     m_RobotContainer.setAutoAlign(autoAlignOn.getBoolean(false));
   }
